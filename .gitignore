@@ -1,0 +1,20 @@
+# compiled python
+*.py[co]
+build
+build-stamp
+# editor debris
+*~
+.#*
+._*
+.*.sw?
+# OS debris
+.DS_Store
+# ignore temp/state files
+.netrwhist
+#
+node_modules
+# don't include the sag couch library
+wiki/WEnotes/sag*
+# don't include the configuration file
+couchserver.json
+
