@@ -56,9 +56,14 @@ define('LOG_STREAM', getenv('LOG_STREAM'));
 // include the dependencies
 require BFF_PATH . '/bff-app.php';
 
+function bff_register_widgets() {
+    register_widget('BFF_Widget');
+}
+
 if ( function_exists( 'add_action' ) ) {
   // this starts everything up!
-  add_action('plugins_loaded', array(BFF::get_instance(), 'init'));
+  add_action('widgets_init', 'bff_register_widgets');
+  //add_action('plugins_loaded', array(BFF_Widget::get_instance(), 'init'));
 } else {
 	echo 'This only works as a WordPress plugin.';
 	exit;
