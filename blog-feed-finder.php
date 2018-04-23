@@ -42,9 +42,11 @@ define('BFF_URL', plugins_url("/", __FILE__));
 // absolute server path to this plugin
 define('BFF_PATH', plugin_dir_path(__FILE__));
 // module details
-define('BFF_SLUG', 'BFF');
+define('BFF_SLUG', 'blog-feed-finder');
 define('BFF_TITLE', 'Blog Feed Finder');
 define('BFF_MENU', 'BFF');
+define('BFF_SHORTCODE', 'bff_form');
+define('BFF_CLASS', 'bff-form');
 // admin details
 define('BFF_ADMIN_SLUG', 'BFF_settings');
 define('BFF_ADMIN_TITLE', 'Blog Feed Finder Settings');
@@ -56,14 +58,9 @@ define('LOG_STREAM', getenv('LOG_STREAM'));
 // include the dependencies
 require BFF_PATH . '/bff-app.php';
 
-function bff_register_widgets() {
-    register_widget('BFF_Widget');
-}
-
 if ( function_exists( 'add_action' ) ) {
-  // this starts everything up!
-  add_action('widgets_init', 'bff_register_widgets');
-  //add_action('plugins_loaded', array(BFF_Widget::get_instance(), 'init'));
+    // this starts everything up!
+    add_action('plugins_loaded', array(BFFForm::get_instance(), 'init'));
 } else {
 	echo 'This only works as a WordPress plugin.';
 	exit;
