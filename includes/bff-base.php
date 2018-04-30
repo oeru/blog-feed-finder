@@ -4,6 +4,13 @@
  */
 
 abstract class BFFBase {
+
+    // construct JSON responses to AJAX queries
+    public function response($a) {
+        echo json_encode($a);
+        die();
+    }
+
     // Debugging related //////////////////////////
     //
     // log things to the web server log

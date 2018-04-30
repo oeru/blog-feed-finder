@@ -46,6 +46,7 @@ define('BFF_SLUG', 'blog-feed-finder');
 define('BFF_TITLE', 'Blog Feed Finder');
 define('BFF_MENU', 'BFF');
 define('BFF_SHORTCODE', 'bff_form');
+define('BFF_ID', 'blog-feed-finder');
 define('BFF_CLASS', 'bff-form');
 // admin details
 define('BFF_ADMIN_SLUG', 'BFF_settings');

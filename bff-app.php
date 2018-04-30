@@ -1,8 +1,8 @@
 <?php
 
-require BFF_PATH . '/includes/bff-base.php';
+require BFF_PATH . '/includes/bff-finder.php';
 
-class BFFForm extends BFFBase {
+class BFFForm extends BFFFinder {
     protected static $instance = NULL; // this instance
     private $errors = array();
 
@@ -33,6 +33,17 @@ class BFFForm extends BFFBase {
         add_filter('post_class', array($this, 'add_post_class'));
         // and create the post to hold short code...
         $this->create_post(BFF_SLUG);
+        $this->log('setting up scripts');
+        // add the ajax handlers
+        wp_enqueue_script('bff-script', BFF_URL.'js/script.js', array(
+            'jquery', 'jquery-form'
+        ));
+        wp_localize_script('bff-script', 'bff_data', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce_submit' => wp_create_nonce('bff-submit-nonce'),
+        ));
+        add_action('wp_ajax_bff_submit', array($this, 'ajax_submit'));
+        $this->log('finished setting up scripts');
     }
 
     protected function register_scripts() {
@@ -52,11 +63,46 @@ class BFFForm extends BFFBase {
         wp_enqueue_style('bff-style');
     }
 
+    // the function called after the bff-submit button is clicked in our form
+    public function ajax_submit() {
+        $this->log('in ajax_submit: '.print_r($_POST, true));
+        // check if the submitted nonce matches the generated nonce created in the auth_init functionality
+       if ( ! wp_verify_nonce( $_POST['nonce_submit'], 'bff-submit-nonce') ) {
+           die ("Busted - someone's trying something funny in submit!");
+       }
+       $this->log("processing form...");
+       // generate the response
+       header( "Content-Type: application/json" );
+       $this->response(array('success' => $this->process()));
+       // IMPORTANT: don't forget to "exit"
+       exit;
+    }
+
     // process the form. This to be replaced by an ajax form
     public function process() {
-        if (isset($POST['bff-submitted'])) {
+        $this->log('in process with '. print_r($_POST, true));
+        if (isset($_POST['action']) && $_POST['action'] == 'bff_submit') {
+            $url = $_POST['url'];
+            $this->log('looking at URL = '. $url);
+            $this->process_url($url);
+            $this->log('returned error object: '. print_r($this->error, true));
+            if (isset($this->error['orig_url'])) $response['orig_url'] = $this->error['orig_url'];
+            if (isset($this->error['code'])) $response['code'] = $this->error['code'];
+            if (isset($this->error['redirect'])) $response['redirect'] = $this->error['redirect'];
+            if (isset($this->error['comment'])) $response['message'] = $this->error['comment'];
+            if ($this->error['valid']) {
+                $response['success'] = true;
+            } else {
+                $response['error'] = true;
+            }
+            $this->response($response);
+
+            /*$this->response(array(
+                'success' => true,
+                'message' => 'Well done!'
+            ));*/
             // call the validation
-            $this->validate($_POST['bff-url']);
+            /*$this->validate($_POST['bff-url']);
 
             if (is_array($this->errors)) {
                 foreach ($this->errors as $error) {
@@ -65,16 +111,21 @@ class BFFForm extends BFFBase {
                     echo $error . '<br/>';
                     echo '</div>';
                 }
-            }
+            }*/
+            return true;
+        } else {
+            $this->log('no bff_submit found...');
         }
-        self::form();
+        //self::form();
+        return false;
     }
 
     // define what happens when the shortcode - BFF_SHORTCODE - is fired...
     public function shortcode($atts,$content="") {
         $this->log('in shortcode');
         ob_start();
-        $this->process();
+        //$this->process();
+        $this->form();
         return ob_get_clean();
     }
 
@@ -92,12 +143,12 @@ class BFFForm extends BFFBase {
         }
         // outputs the options form on admin
         ?>
-        <div class="<?php echo BFF_CLASS; ?>">
-            <label class="<?php echo BFF_CLASS; ?>">'<?php echo __('Find your blog\'s feed address!'); ?>'</label><br/>
-            <input type="text" name="bff-url" class="bff-url" value="<?php echo $bff_arr['bff-url']; ?>" />
-            <a class="bff-submit" href="javascript:void(0);">Submit</a>
+        <div id="<?php echo BFF_ID; ?>" class="<?php echo BFF_CLASS; ?>">
+            <label class="<?php echo BFF_CLASS; ?>"><?php echo __('Find your blog\'s feed address!'); ?></label><br/>
+            <input id="bff-url" class="url" type="text" name="bff-url" value="<?php echo $bff_arr['bff-url']; ?>" />
+            <a id="bff-submit" class="submit" href="javascript:void(0);">Submit</a>
             <input type="hidden" name="bff-hidd" value="true" /><br/>
-            <div class="bff-feedback">
+            <div id="bff-feedback" class="feedback">
                 <p>Feedback...</p>
             </div>
         </div>
@@ -172,8 +223,7 @@ class BFFForm extends BFFBase {
         $post['post_name'] = $slug;
         $post['post_slug'] = $slug;
         $post['post_title']  = 'Blog Feed Finder';
-        $post['post_content'] = "The Blog Feed Finder helps you work out the exact web address (\"URL\") for your blog's feed.
-            [".BFF_SHORTCODE."] ";
+        $post['post_content'] = "The Blog Feed Finder helps you work out the exact web address (\"URL\") for your blog's feed. [".BFF_SHORTCODE."] ";
         return $post;
     }
 }

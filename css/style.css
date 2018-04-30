@@ -3,34 +3,49 @@
 article.bff-form .container {
     background: #fefefe;
 }
-article.bff-form .container .entry-content {
+article.bff-form .container .entry-content p {
+    padding-left: 28px;
+}
+article.bff-form .container .entry-content #blog-feed-finder {
     /*border: dotted 1px #ccc;*/
-    padding-left: 20px;
+    padding: 20px;
+    margin: 2em;
+    border: 2px #ddd solid;
+    border-radius: 6px;
+    background: #eee;
+    width: auto;
 }
-article.bff-form .container .bff-form .bff-url {
-    width: 30em;
+article.bff-form .container .bff-form .url {
+    width: 28em;
 }
-article.bff-form .container .bff-form .bff-submit {
+article.bff-form .container .bff-form .submit {
     padding: 6px 8px;
     color: #333;
     background: #F7BD27;
     border-radius: 5px;
     box-shadow: 2px 2px 10px #000;
 }
-article.bff-form .container .bff-form .bff-submit:hover {
+article.bff-form .container .bff-form .submit:hover {
     color: #000;
     box-shadow: 4px 4px 10px #000;
     text-decoration: none;
 }
-article.bff-form .container .bff-form .bff-submit:active {
+article.bff-form .container .bff-form .submit:active {
     box-shadow: 0px 0px 10px #000;
     text-decoration: none;
 }
-article.bff-form .container .bff-form .bff-submit:visited {
+article.bff-form .container .bff-form .submit:visited {
     text-decoration: none;
 }
-article.bff-form .container .bff-form .bff-feedback {
+article.bff-form .container .bff-form .feedback {
     margin-top: 1em;
     padding: 6px 2px;
-    color: #9C0B06;
+    /*color: #9C0B06;*/
+    color: blue;
+}
+article.bff-form .container .bff-form .feedback.success {
+    color: green;
+}
+article.bff-form .container .bff-form .feedback.failure {
+    color: red;
 }
