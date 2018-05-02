@@ -6,7 +6,7 @@
 abstract class BFFBase {
 
     // construct JSON responses to AJAX queries
-    public function response($a) {
+    public function ajax_response($a) {
         echo json_encode($a);
         die();
     }

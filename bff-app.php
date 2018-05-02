@@ -12,15 +12,7 @@ class BFFForm extends BFFFinder {
         return self::$instance;
     }
 
-/*    public function __construct() {
-        $this->log('in constructor');
-        // widget actual processes
-        parent::__construct('BFFForm', 'Blog Feed Finder Widget',
-            array('description' => __('A Widget to help users specify a valid URL for their blog feed',
-            'text_domain')));
-        $this->init();
-    }*/
-
+    // this starts everything...
     public function init() {
         $this->log('in init');
         $this->register_scripts();
@@ -73,7 +65,7 @@ class BFFForm extends BFFFinder {
        $this->log("processing form...");
        // generate the response
        header( "Content-Type: application/json" );
-       $this->response(array('success' => $this->process()));
+       $this->ajax_response(array('success' => $this->process()));
        // IMPORTANT: don't forget to "exit"
        exit;
     }
@@ -85,33 +77,18 @@ class BFFForm extends BFFFinder {
             $url = $_POST['url'];
             $this->log('looking at URL = '. $url);
             $this->process_url($url);
-            $this->log('returned error object: '. print_r($this->error, true));
-            if (isset($this->error['orig_url'])) $response['orig_url'] = $this->error['orig_url'];
-            if (isset($this->error['code'])) $response['code'] = $this->error['code'];
-            if (isset($this->error['redirect'])) $response['redirect'] = $this->error['redirect'];
-            if (isset($this->error['comment'])) $response['message'] = $this->error['comment'];
-            if ($this->error['valid']) {
+            $this->log('returned error object: '. print_r($this->response, true));
+            if (isset($this->response['orig_url'])) $response['orig_url'] = $this->response['orig_url'];
+            if (isset($this->response['code'])) $response['code'] = $this->response['code'];
+            if (isset($this->response['redirect'])) $response['redirect'] = $this->response['redirect'];
+            if (isset($this->response['type'])) $response['type'] = $this->response['type'];
+            if (isset($this->response['comment'])) $response['message'] = $this->response['comment'];
+            if ($this->response['valid']) {
                 $response['success'] = true;
             } else {
                 $response['error'] = true;
             }
-            $this->response($response);
-
-            /*$this->response(array(
-                'success' => true,
-                'message' => 'Well done!'
-            ));*/
-            // call the validation
-            /*$this->validate($_POST['bff-url']);
-
-            if (is_array($this->errors)) {
-                foreach ($this->errors as $error) {
-                    echo '<div>';
-                    echo '<strong>ERROR</strong>:';
-                    echo $error . '<br/>';
-                    echo '</div>';
-                }
-            }*/
+            $this->ajax_response($response);
             return true;
         } else {
             $this->log('no bff_submit found...');
@@ -133,35 +110,17 @@ class BFFForm extends BFFFinder {
     public function form() {
         $this->log('in form');
 
-        if (!$_POST)
-            $bff_arr = unserialize(get_option('bff_ID_' . $this->number));
-        else {
-            if ($_POST['bff-hidd'] == 'true') {
-                $bff_arr['bff-url'] = $_POST['bff-url'];
-                update_option('bff_ID_' . $this->number, serialize($bff_arr));
-            }
-        }
         // outputs the options form on admin
         ?>
-        <div id="<?php echo BFF_ID; ?>" class="<?php echo BFF_CLASS; ?>">
+        <form id="<?php echo BFF_ID; ?>" class="<?php echo BFF_CLASS; ?>" target="#">
             <label class="<?php echo BFF_CLASS; ?>"><?php echo __('Find your blog\'s feed address!'); ?></label><br/>
-            <input id="bff-url" class="url" type="text" name="bff-url" value="<?php echo $bff_arr['bff-url']; ?>" />
-            <a id="bff-submit" class="submit" href="javascript:void(0);">Submit</a>
-            <input type="hidden" name="bff-hidd" value="true" /><br/>
+            <input id="bff-url" class="url" type="text" name="bff-url" value="" />
+            <a id="bff-submit" class="submit" href="#">Submit</a><br/>
             <div id="bff-feedback" class="feedback">
                 <p>Feedback...</p>
             </div>
-        </div>
+        </form>
         <?php
-    }
-
-    public function update($new_instance, $old_instance) {
-        $this->log('in update');
-        // processes widget options to be saved
-        if ($_POST['bff-hidd'] == 'true') {
-            $bff_arr['bff-url'] = $_POST['bff-url'];
-            update_option('bff_ID_' . $this->number, serialize($bff_arr));
-        }
     }
 
     // create a default post to hold our form...
@@ -223,7 +182,10 @@ class BFFForm extends BFFFinder {
         $post['post_name'] = $slug;
         $post['post_slug'] = $slug;
         $post['post_title']  = 'Blog Feed Finder';
-        $post['post_content'] = "The Blog Feed Finder helps you work out the exact web address (\"URL\") for your blog's feed. [".BFF_SHORTCODE."] ";
+        $post['post_content'] = "<p>The Blog Feed Finder helps you work out the exact web address (URL) for your blog's feed.</p>"
+            ."<p>You can start by going to your blog in another browser tab or window, copying the web address "
+            ."- the text in your browser's 'address bar' which starts with 'http://' or 'https://' - "
+            ."and pasting it into the text field below.</p>[".BFF_SHORTCODE."]";
         return $post;
     }
 }

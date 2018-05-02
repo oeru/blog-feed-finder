@@ -52,6 +52,8 @@ define('BFF_CLASS', 'bff-form');
 define('BFF_ADMIN_SLUG', 'BFF_settings');
 define('BFF_ADMIN_TITLE', 'Blog Feed Finder Settings');
 define('BFF_ADMIN_MENU', 'BFF Settings');
+// other useful parameters
+define('BFF_MAX_FILE_READ_CHAR', 100000);
 // turn on debugging with true, off with false
 define('BFF_DEBUG', true);
 define('LOG_STREAM', getenv('LOG_STREAM'));

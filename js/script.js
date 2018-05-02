@@ -1,12 +1,28 @@
-// see http://solislab.com/blog/5-tips-for-using-ajax-in-wordpress/
-// and https://pippinsplugins.com/using-ajax-your-plugin-wordpress-admin/
+/* created by Dave Lane, dave@oerfoundation.org, https://oeru.org */
+
+function get_url(data) {
+    if (data.hasOwnProperty('redirect') && data.redirect != "") {
+        console.log('Redirect... ', data.redirect);
+        url = data.redirect;
+    } else {
+        console.log('Original... ', data.orig_url)
+        url = data.orig_url;
+    }
+    return url;
+}
 
 jQuery(document).ready(function() {
     console.log('blog-feed-finder', bff_data);
 
+    // because this uses jquery selectors, it's in here
+    function replace_url(data) {
+        url = get_url(data);
+        $('#bff-url').val(url);
+    }
+
     var $ = jQuery;
 
-    $('#bff-feedback').removeClass('success', 'failure');
+    $('#bff-feedback').removeClass('success failure');
     $('#bff-feedback').text('Ready...');
 
     // handle (re)load of the page
@@ -28,11 +44,10 @@ jQuery(document).ready(function() {
 
     // handle the submit button being pushed
     $('#bff-submit').click(function() {
-        // disable the submit button until it returns.
         $('#bff-submit').attr('disabled', true);
-        $('#bff-feedback').removeClass('success', 'failure');
+        $('#bff-feedback').removeClass('success failure');
         $('#bff-feedback').html('Processing...');
-        console.log('url: ', bff_data.ajaxurl);
+        //console.log('url: ', bff_data.ajaxurl);
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -40,7 +55,7 @@ jQuery(document).ready(function() {
             data: {
                 'action': 'bff_submit',
                 'nonce_submit' : bff_data.nonce_submit,
-                'url' : $.trim($('#bff-url').val()),
+                'url' : $('#bff-url').val(),
             },
             success: function(data) {
                 var msg = '';
@@ -54,26 +69,21 @@ jQuery(document).ready(function() {
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
                     $('#bff-feedback').text(msg);
-                    if (data.hasOwnProperty('redirect')) {
-                        $('#bff-url').val(data.redirect);
-                    }
+                    replace_url(data);
                 } else if (data.hasOwnProperty('error')) {
                     msg = data.message;
                     console.log('Error msg', msg);
-                    console.log('message:', msg);
                     $('#bff-submit').attr('disabled', false);
                     $('#bff-feedback').text(msg);
                     $('#bff-feedback').addClass('failure');
                     $('#bff-feedback').removeClass('success');
-                    if (data.hasOwnProperty('redirect')) {
-                        $('#bff-url').val(data.redirect);
-                    }
+                    replace_url(data);
                 }
                 return true;
             },
             failure: function(data) {
                 console.log('Failure: data: ', data);
-                $('#bff-feedback').removeClass('failure', 'success');
+                $('#bff-feedback').removeClass('failure success');
                 $('#bff-feedback').text(msg);
             }
         });
