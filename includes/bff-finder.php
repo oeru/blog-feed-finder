@@ -216,7 +216,11 @@ abstract class BFFFinder extends BFFTarget {
             }
             // now query the URL and work out the response
             $this->log('testing for the existence of '.$url);
+            // set this to ensure that the get_headers call times out quickly...
+            ini_set('default_socket_timeout', 5);
             $headers = @get_headers($url);
+            // return it to its normal value
+            ini_set('default_socket_timeout', 60);
             if ($headers){
                 $this->log('looks like we found something! Returns: '.
                     print_r($headers, true));
@@ -274,11 +278,11 @@ abstract class BFFFinder extends BFFTarget {
                 }
             } else {
                 $this->log('no headers returned');
-                $this->set_response(false, $url, '', 'unknown', '', 'The URL entered, "'.$url.'", isn\'t found. The internet doesn\'t think it exists - perhaps a spelling error?', 'problem');
+                $this->set_response(false, $url, '', 'unknown', '', 'The web address entered, "'.$url.'", isn\'t responding. Either the site is down, incredibly slow, or it doesn\'t exist - perhaps a spelling error?', 'problem');
             }
         } else {
             $this->log('empty URL');
-            $this->set_response(false, '', '', 'unknown', '', 'No URL entered!', 'problem');
+            $this->set_response(false, '', '', 'unknown', '', 'No web address entered!', 'problem');
         }
         return true;
     }
