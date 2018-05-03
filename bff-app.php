@@ -78,17 +78,7 @@ class BFFForm extends BFFFinder {
             $this->log('looking at URL = '. $url);
             $this->process_url($url);
             $this->log('returned error object: '. print_r($this->response, true));
-            if (isset($this->response['orig_url'])) $response['orig_url'] = $this->response['orig_url'];
-            if (isset($this->response['code'])) $response['code'] = $this->response['code'];
-            if (isset($this->response['redirect'])) $response['redirect'] = $this->response['redirect'];
-            if (isset($this->response['type'])) $response['type'] = $this->response['type'];
-            if (isset($this->response['comment'])) $response['message'] = $this->response['comment'];
-            if ($this->response['valid']) {
-                $response['success'] = true;
-            } else {
-                $response['error'] = true;
-            }
-            $this->ajax_response($response);
+            $this->ajax_response($this->get_ajaxresponse());
             return true;
         } else {
             $this->log('no bff_submit found...');
@@ -183,8 +173,8 @@ class BFFForm extends BFFFinder {
         $post['post_slug'] = $slug;
         $post['post_title']  = 'Blog Feed Finder';
         $post['post_content'] = "<p>The Blog Feed Finder helps you work out the exact web address (URL) for your blog's feed.</p>"
-            ."<p>You can start by going to your blog in another browser tab or window, copying the web address "
-            ."- the text in your browser's 'address bar' which starts with 'http://' or 'https://' - "
+            ."<p>You can start by going to your blog in another browser tab or window...</p>"
+            ."<p>Copy the web address - the text in your browser's 'address bar' which starts with 'http://' or 'https://' - "
             ."and pasting it into the text field below.</p>[".BFF_SHORTCODE."]";
         return $post;
     }

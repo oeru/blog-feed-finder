@@ -11,6 +11,16 @@ function get_url(data) {
     return url;
 }
 
+function compile_message(msgs, types) {
+    msg='<div class="bff-responses">';
+    msgs.forEach(function(entry) {
+        msg += '<p class="bff-response ' + entry.type + '">' +
+            types[entry.type] + ': ' + entry.message + '</p>';
+    });
+    msg += "</div>";
+    return msg;
+}
+
 jQuery(document).ready(function() {
     console.log('blog-feed-finder', bff_data);
 
@@ -58,25 +68,18 @@ jQuery(document).ready(function() {
                 'url' : $('#bff-url').val(),
             },
             success: function(data) {
-                var msg = '';
+                var msgs = '';
+                var types = data.types
                 console.log('Success: data: ', data);
                 if (data.hasOwnProperty('success')) {
                     // strip links out
                     //msg = data.message.replace(/<a[^>]*>[^<]*<\/a>/g, '');
-                    msg = data.message;
-                    console.log('Success msg', msg);
+                    msgs = data.messages;
+                    console.log('Success msgs', msgs);
                     $('#bff-submit').attr('disabled', false);
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
-                    $('#bff-feedback').text(msg);
-                    replace_url(data);
-                } else if (data.hasOwnProperty('error')) {
-                    msg = data.message;
-                    console.log('Error msg', msg);
-                    $('#bff-submit').attr('disabled', false);
-                    $('#bff-feedback').text(msg);
-                    $('#bff-feedback').addClass('failure');
-                    $('#bff-feedback').removeClass('success');
+                    $('#bff-feedback').html(compile_message(msgs, types));
                     replace_url(data);
                 }
                 return true;
