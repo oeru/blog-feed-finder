@@ -37,7 +37,7 @@ article.bff-form .container .entry-content p {
 #bff-submit:visited {
     text-decoration: none;
 }
-#bff-feedback {
+#bff-feedback, #bff-feeds {
     margin-top: 1em;
     padding: 6px 2px;
     /*color: #9C0B06;*/
@@ -49,7 +49,7 @@ article.bff-form .container .entry-content p {
 #bff-feedback.failure {
     color: red;
 }
-#bff-feedback p {
+#bff-feedback p, #bff-feeds p {
     padding-left: 0px;
 }
 #bff-feedback p.neutral {

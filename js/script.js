@@ -81,6 +81,9 @@ jQuery(document).ready(function() {
                     $('#bff-feedback').removeClass('failure');
                     $('#bff-feedback').html(compile_message(msgs, types));
                     replace_url(data);
+                    if (data.hasOwnProperty('feeds')) {
+                        $('#bff-feeds').attr('hidden', false);
+                    }
                 }
                 return true;
             },

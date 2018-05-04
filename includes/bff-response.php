@@ -74,7 +74,7 @@ abstract class BFFResponse extends BFFBase {
     }
 
     // create a sutiable oject
-    public function get_ajaxresponse() {
+    public function ajaxresponse() {
         $this->response['success'] = true;
         $this->response['types'] = $this->response_types;
         return $this->response;

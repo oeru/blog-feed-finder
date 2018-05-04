@@ -77,8 +77,10 @@ class BFFForm extends BFFFinder {
             $url = $_POST['url'];
             $this->log('looking at URL = '. $url);
             $this->process_url($url);
-            $this->log('returned error object: '. print_r($this->response, true));
-            $this->ajax_response($this->get_ajaxresponse());
+            $this->log('returned response object: '. print_r($this->response, true));
+            // sending the response object to be converted to JSON and returned to
+            // the calling page
+            $this->ajax_response($this->ajaxfeeds());
             return true;
         } else {
             $this->log('no bff_submit found...');
@@ -108,6 +110,9 @@ class BFFForm extends BFFFinder {
             <a id="bff-submit" class="submit" href="#">Submit</a><br/>
             <div id="bff-feedback" class="feedback">
                 <p>Feedback...</p>
+            </div>
+            <div id="bff-feeds" class="feeds" hidden>
+                <p>Feeds...</p>
             </div>
         </form>
         <?php

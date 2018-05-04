@@ -2,9 +2,11 @@
 /*
  * URL finder class
  */
-require BFF_PATH . '/includes/bff-target.php';
+require BFF_PATH . '/includes/bff-feed.php';
 
-abstract class BFFFinder extends BFFTarget {
+abstract class BFFFinder extends BFFFeed {
+    // domains that aren't going to be blog sites that people might add
+    // accidentally
     protected $bad_hosts = array(
         DOMAIN_CURRENT_SITE,
         'accounts.google.com',
@@ -17,6 +19,7 @@ abstract class BFFFinder extends BFFTarget {
         'www.google.com',
         'www.saylor.org',
     );
+    // common path/file.suffix for feeds on blogs
     protected $usual_places = array(
         'rss.xml',
         'feed.rss',
@@ -24,6 +27,7 @@ abstract class BFFFinder extends BFFTarget {
         'rss.atom',
         'feed.json',
     );
+    // formal content type and label
     protected $feed_types = array(
         'application/atom+xml' => 'Atom',
         'application/rss+xml' => 'RSS',
@@ -36,11 +40,15 @@ abstract class BFFFinder extends BFFTarget {
         $url = sanitize_text_field($entered_url);
         $this->log('entered url: '.$entered_url.', sanitised: '.$url);
         // now test the URL...
+        $succeeded = false;
+        // set this to ensure that the various URL fetches, e.g. get_headers, time out quickly...
+        ini_set('default_socket_timeout', 5);
         $this->test_url($url);
         $response = $this->response; // just for convenience...
         $this->log('### test_url response: '. print_r($response, true));
         // if we got a valid URL...
         if ($response['valid_url']) {
+
                 if ($response['code'] == '302' || $response['code'] == '301') {
                 //if ($path != '') { $redirect .= $path; }
                 $url = $response['redirect'];
@@ -60,27 +68,30 @@ abstract class BFFFinder extends BFFTarget {
                 if ($this->find_feed_in_page($url)) {
                     $this->log('found a feed reference in the page content!');
                     // look for a feed referenced in the page
-                    return true;
+                    $succeeded = true;
                 } else if ($this->find_feed_in_usual_places($url)) {
                     // look for feeds in the normal places
                     $this->log('looking for a feed in the usual places');
-                    return true;
+                    $succeeded = true;
                 } else {
                     $this->log('failed to find a feed at: '. $url);
                     $this->set_response(true, $response['orig_url'], $response['path'],
                         'No feed found', $response['redirect'],
-                        'We weren\'t able to find a feed anywhere near '.$url.'... it\'s possible the site just doesn\'t have one.', 'problem');
+                        'We weren\'t able to find a feed on '.$url.'... it\'s possible the site just doesn\'t have one.', 'problem');
                 }
             }
-            // we've successfully processed the URL...
-            //return true;
+        }
+        // we need to make sure this is returned to its normal value
+        ini_set('default_socket_timeout', 60);
+        if ($succeeded) {
+            return true;
         }
         return false;
     }
 
     // check and see if there are any references to feeds in the content of the page
     public function find_feed_in_page($url) {
-        $this->log('checking the page of '.$url.' to look for feed references.');
+        $this->log('checking the content of '.$url.' to look for feed references.');
         // 1. Check if the page is, itself, a feed, by checking the Content-Type header
         if (array_key_exists($this->response['content_type'], $this->feed_types)) {
             $content_type = $this->feed_types[$this->response['content_type']];
@@ -97,6 +108,7 @@ abstract class BFFFinder extends BFFTarget {
             if (array_key_exists($type, $this->feed_types)) {
                 $this->log('the content is of type "'.$this->feed_types[$type].'".');
                 $this->response['content_type'] = $type;
+                $this->add_feed($url,$type);
                 return true;
             }
             $this->log('the content is XML, but not of a sort we support as a feed type');
@@ -104,8 +116,10 @@ abstract class BFFFinder extends BFFTarget {
             $this->log('the content isn\'t valid XML.');
         }
         // 2.b now check if the content is valid JSON...
-        if ($this->is_valid_json($content)) {
-
+        if ($type = $this->is_valid_json($content)) {
+            $this->log('ok, found that it\'s in JSON format, so it\'s probably a feed.');
+            $this->add_feed($url, $type);
+            return true;
         }
         // Failing that, check if the page has any references to feeds...
         // create an object that knows how to read an HTML string and convert it into a DOM
@@ -121,9 +135,18 @@ abstract class BFFFinder extends BFFTarget {
                     if (array_key_exists($link->getAttribute('type'), $this->feed_types)) {
                         $this->log('link title: '.$link->getAttribute('title').' type: '.$link->getAttribute('type'));
                         $type_name = $this->feed_types[$link->getAttribute('type')];
-                        $this->add_message(' "'.$type_name.'" feed "'.
-                        $link->getAttribute('title').'" found at address '.
-                            $link->getAttribute('href').'!','good');
+                        if ($link->getAttribute('title') != '') {
+                            $msg = ' "'.$type_name.'" feed "'
+                                .$link->getAttribute('title').'" found at address '
+                                .$link->getAttribute('href').'!';
+                                $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'),
+                                    $link->getAttribute('title'));
+                        } else {
+                            $msg = 'Untitled "'.$type_name.'" feed found at address '
+                                .$link->getAttribute('href').'!';
+                            $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'));
+                        }
+                        $this->add_message($msg,'good');
                         $found++;
                     }
                 }
@@ -132,7 +155,9 @@ abstract class BFFFinder extends BFFTarget {
         } else {
             $this->log('no feeds found in this document');
         }
-        if ($found > 0) return $true;
+        if ($found > 0) {
+            return true;
+        }
         return false;
     }
 
@@ -216,11 +241,7 @@ abstract class BFFFinder extends BFFTarget {
             }
             // now query the URL and work out the response
             $this->log('testing for the existence of '.$url);
-            // set this to ensure that the get_headers call times out quickly...
-            ini_set('default_socket_timeout', 5);
             $headers = @get_headers($url);
-            // return it to its normal value
-            ini_set('default_socket_timeout', 60);
             if ($headers){
                 $this->log('looks like we found something! Returns: '.
                     print_r($headers, true));
@@ -228,14 +249,14 @@ abstract class BFFFinder extends BFFTarget {
                 switch ($headers[0]) {
                     case 'HTTP/1.0 200 OK':
                     case 'HTTP/1.1 200 OK':
-                        $this->log('Yay! Returning valid url: '.$orig);
+                        $this->log('Yay! Returning valid url: '.$url);
                         $this->set_response(true, $orig, $path, '200', '', '"'.$orig.'" found. It is a valid address!', 'good');
                     break;
                     case 'HTTP/1.0 301 Moved Permanently':
                     case 'HTTP/1.1 301 Moved Permanently':
                         if ($redirect = $this->get_redirect($headers)) {
                             $this->set_response(true, $orig, $path, '301', $redirect,
-                                '"'.$orig.'" found. It redirects to '.$redirect.' via a "permanent redirect" (301)', 'good');
+                                '"'.$url.'" found. It redirects to '.$redirect.' via a "permanent redirect" (301)', 'good');
                         } else {
                             $this->set_response(false, $orig, $path, '301', '', 'Got redirect code (301), but no redirect destination!', 'bad');
                         }
@@ -244,7 +265,7 @@ abstract class BFFFinder extends BFFTarget {
                     case 'HTTP/1.1 302 Moved Temporarily':
                         if ($redirect = $this->get_redirect($headers)) {
                             $this->set_response(true, $orig, $path, '302', $redirect,
-                                '"'.$orig.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'good');
+                                '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'good');
                         } else {
                             $this->set_response(false, $orig, $path, '302', '', 'Got redirect code (302), but no redirect destination!', 'bad');
                         }
@@ -253,7 +274,7 @@ abstract class BFFFinder extends BFFTarget {
                     case 'HTTP/1.1 302 Found':
                         if ($redirect = $this->get_redirect($headers)) {
                             $this->set_response(false, $orig, $path, '302', $redirect,
-                                '"'.$orig.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'neutral');
+                                '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'neutral');
                         } else {
                             $this->set_response(false, $orig, $path, '302', '', 'Got redirect code (302), but no redirect destination!', 'bad');
                         }
@@ -261,7 +282,7 @@ abstract class BFFFinder extends BFFTarget {
                     case 'HTTP/1.0 404 Not Found':
                     case 'HTTP/1.1 404 Not Found':
                         $this->set_response(false, $orig, $path, '404', '',
-                            '"'.$orig.'" was not found. The URL might be wrong, or the site currently unavailable for some reason.', 'problem');
+                            '"'.$url.'" was not found. The URL might be wrong, or the site currently unavailable for some reason.', 'problem');
                         //if (!($path == '/' || $path == '')) {
                         $this->add('Make sure your URL\'s domain and the path (after the /) are spelled correctly! To avoid typos, go to your blog site (not edit page) and copy-paste the URL from your address bar.', 'neutral');
                         //}
