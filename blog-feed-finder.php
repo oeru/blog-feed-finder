@@ -7,7 +7,7 @@ Plugin Name: Blog Feed Finder
 Plugin URI: http://github.com/oeru/bff
 Description: Provides a widget that helps a user figure out the valid URL for
     their personal course blog feed
-Version: 0.0.1
+Version: 0.0.2
 Author: Dave Lane
 Author URI: https://oeru.org, http://WikiEducator.org/User:Davelane
 License: AGPLv3 or later
@@ -30,7 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BFF_VERSION', '0.0.1' );
+define( 'BFF_VERSION', '0.0.2' );
 // plugin computer name
 define('BFF_NAME', 'BFF');
 // current version

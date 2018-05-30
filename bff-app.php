@@ -1,8 +1,8 @@
 <?php
 
-require BFF_PATH . '/includes/bff-finder.php';
+require BFF_PATH . '/includes/bff-course.php';
 
-class BFFForm extends BFFFinder {
+class BFFForm extends BFFCourse {
     protected static $instance = NULL; // this instance
     private $errors = array();
 
@@ -18,7 +18,6 @@ class BFFForm extends BFFFinder {
         $this->register_scripts();
         $this->register_styles();
         // register actions
-        /*add_action('admin_init', array($this, 'admin_init'));*/
         add_shortcode(BFF_SHORTCODE, array($this, 'shortcode'));
         // allows us to add a class to our post
         add_filter('body_class', array($this, 'add_post_class'));
@@ -33,8 +32,14 @@ class BFFForm extends BFFFinder {
         wp_localize_script('bff-script', 'bff_data', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce_submit' => wp_create_nonce('bff-submit-nonce'),
+            'nonce_set' => wp_create_nonce('bff-set-nonce'),
         ));
+        // this enables the feedfinder service for authenticated users...
         add_action('wp_ajax_bff_submit', array($this, 'ajax_submit'));
+        // this allows users who aren't authenticated to use the feedfinder
+        add_action('wp_ajax_nopriv_bff_submit', array($this, 'ajax_submit'));
+        // this enables the setblogfeed service for authenticated users...
+        add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
         $this->log('finished setting up scripts');
     }
 
@@ -57,17 +62,40 @@ class BFFForm extends BFFFinder {
 
     // the function called after the bff-submit button is clicked in our form
     public function ajax_submit() {
-        $this->log('in ajax_submit: '.print_r($_POST, true));
-        // check if the submitted nonce matches the generated nonce created in the auth_init functionality
+       $this->log('in ajax_submit: '.print_r($_POST, true));
+       // check if the submitted nonce matches the generated nonce created in the auth_init functionality
        if ( ! wp_verify_nonce( $_POST['nonce_submit'], 'bff-submit-nonce') ) {
            die ("Busted - someone's trying something funny in submit!");
+       } else {
+           $this->log('bff-submit-nonce all good.');
        }
-       $this->log("processing form...");
+       $this->log("processing submit form...");
        // generate the response
        header( "Content-Type: application/json" );
        $this->ajax_response(array('success' => $this->process()));
        // IMPORTANT: don't forget to "exit"
-       exit;
+       //exit;
+       $this->log('ajax_submit done, dying...');
+       wp_die();
+    }
+
+    public function ajax_set() {
+        $this->log('in ajax_set: '.print_r($_POST, true));
+        // check if the submitted nonce matches the generated nonce created in the auth_init functionality
+        if ( ! wp_verify_nonce( $_POST['nonce_set'], 'bff-set-nonce') ) {
+            $this->log('bff-set-nonce ain\'t right!');
+            die ("Busted - someone's trying something funny in set!");
+        } else {
+            $this->log('bff-set-nonce all good.');
+        }
+        $this->log("processing set form...");
+        // generate the response
+        header( "Content-Type: application/json" );
+        $this->ajax_response(array('success' => $this->process()));
+        // IMPORTANT: don't forget to "exit"
+        //exit;
+        $this->log('ajax_set done, dying...');
+        wp_die();
     }
 
     // process the form. This to be replaced by an ajax form
@@ -77,16 +105,40 @@ class BFFForm extends BFFFinder {
             $url = $_POST['url'];
             $this->log('looking at URL = '. $url);
             $this->process_url($url);
-            $this->log('returned response object: '. print_r($this->response, true));
+            // update the response object with the courses array...
+            $this->response = $this->list_courses();
+            //$this->log('processing submit: returned response object: '. print_r($this->response, true));
             // sending the response object to be converted to JSON and returned to
             // the calling page
             $this->ajax_response($this->ajaxfeeds());
-            return true;
+            //$this->log('back from ajaxfeeds...');
+            //return true;
+        } elseif (isset($_POST['action']) && $_POST['action'] == 'bff_set') {
+            $user = $this->get_current_user();
+            $uid = $user->ID;
+            //$course = $this->get_course_details($_POST['course']);
+            $feed = $_POST['feed'];
+            $this->log('processing set request for feed = '. print_r($feed, true));
+            $url = $feed['url'];
+            $type = $feed['type'];
+            $this->log('feed info: '.print_r($feed, true));
+        //    $id = $course['id'];
+        //    $tag = $course['tag'];
+            $id = $_POST['course_id'];
+            $tag = $_POST['course_tag'];
+            $this->log('setting the feed URL for '.$uid.' in course '.$id.' ('.$tag.
+                ') to '.$url.' of type '.$type);
+            if ($this->process_set_feed($uid, $id, $url, $type)) {
+                $this->log('processing set: returned response object: '. print_r($this->response, true));
+                //return true;
+            } else {
+                $this->log('failed to process set...');
+            }
         } else {
-            $this->log('no bff_submit found...');
+            $this->log('no POST action found...');
         }
         //self::form();
-        return false;
+        //return false;
     }
 
     // define what happens when the shortcode - BFF_SHORTCODE - is fired...
@@ -101,18 +153,34 @@ class BFFForm extends BFFFinder {
     // for the administrative functionality
     public function form() {
         $this->log('in form');
+        $course_list;
+        $feed_list;
+
+        // alert the user that they're not logged in
+        if (!is_user_logged_in()) {
+        //if (is_user_logged_in()) {
+            $this->log('the current user ++isn\'t++ logged in!');
+            $this->alert_anon_user();
+        } else {
+            $this->log('the current user *is* logged in!');
+            // compile a list of courses the user's registered for
+            //$this->list_courses();
+        }
+        // compile a list of valid feeds (ideally, just one)
+        //$feed_list = $this->list_feeds();
 
         // outputs the options form on admin
         ?>
         <form id="<?php echo BFF_ID; ?>" class="<?php echo BFF_CLASS; ?>" target="#">
             <label class="<?php echo BFF_CLASS; ?>"><?php echo __('Find your blog\'s feed address!'); ?></label><br/>
             <input id="bff-url" class="url" type="text" name="bff-url" value="" />
-            <a id="bff-submit" class="submit" href="#">Submit</a><br/>
+            <span id="bff-submit" class="submit button" href="#">Submit</span><br/>
             <div id="bff-feedback" class="feedback">
                 <p>Feedback...</p>
             </div>
             <div id="bff-feeds" class="feeds" hidden>
-                <p>Feeds...</p>
+                <div id="bff-feed-list" hidden></div>
+                <div id="bff-course-list" hidden></div>
             </div>
         </form>
         <?php
@@ -179,7 +247,7 @@ class BFFForm extends BFFFinder {
         $post['post_title']  = 'Blog Feed Finder';
         $post['post_content'] = "<p>The Blog Feed Finder helps you work out the exact web address (URL) for your blog's feed.</p>"
             ."<p>You can start by going to your blog in another browser tab or window...</p>"
-            ."<p>Copy the web address - the text in your browser's 'address bar' which starts with 'http://' or 'https://' - "
+            ."<p>Copy the web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
             ."and pasting it into the text field below.</p>[".BFF_SHORTCODE."]";
         return $post;
     }

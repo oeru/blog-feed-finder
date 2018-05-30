@@ -27,12 +27,13 @@ abstract class BFFFinder extends BFFFeed {
         'rss.atom',
         'feed.json',
     );
-    // formal content type and label
-    protected $feed_types = array(
-        'application/atom+xml' => 'Atom',
-        'application/rss+xml' => 'RSS',
-        'application/json' => 'JSON',
-    );
+
+    public function process_feed_selection($selected, $feeds) {
+        //$this->log('processing feed selection, button: '.$selected.' and feeds: '.print_r($feeds, true));
+        // the array index is the final segment of the CSS id, e.g. bff-select-3...
+        $feed_id = explode("-",$selected)[2];
+        $this->log('selected feed['.$feed_id.']: '. print_r($feeds[$feed_id], true));
+    }
 
     // process the URL provided by the user
     public function process_url($entered_url) {
@@ -48,7 +49,6 @@ abstract class BFFFinder extends BFFFeed {
         $this->log('### test_url response: '. print_r($response, true));
         // if we got a valid URL...
         if ($response['valid_url']) {
-
                 if ($response['code'] == '302' || $response['code'] == '301') {
                 //if ($path != '') { $redirect .= $path; }
                 $url = $response['redirect'];
@@ -136,17 +136,29 @@ abstract class BFFFinder extends BFFFeed {
                         $this->log('link title: '.$link->getAttribute('title').' type: '.$link->getAttribute('type'));
                         $type_name = $this->feed_types[$link->getAttribute('type')];
                         if ($link->getAttribute('title') != '') {
-                            $msg = ' "'.$type_name.'" feed "'
-                                .$link->getAttribute('title').'" found at address '
-                                .$link->getAttribute('href').'!';
+                            // allow feeds that don't have "Comments Feed" in the title...
+                            if (strpos($link->getAttribute('title'), 'Comments Feed') == false) {
+                                $msg = ' "'.$type_name.'" feed "'
+                                    .$link->getAttribute('title').'" found at '
+                                    .$link->getAttribute('href').'...';
+                                // add this feed...
                                 $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'),
                                     $link->getAttribute('title'));
+                                $type = 'good';
+                            } else {
+                                // don't add this feed
+                                $msg = ' "'.$type_name.'" feed "'
+                                    .$link->getAttribute('title').'" found at '
+                                    .$link->getAttribute('href').'. This is probably not what we want...';
+                                $type = 'neutral';
+                            }
                         } else {
                             $msg = 'Untitled "'.$type_name.'" feed found at address '
                                 .$link->getAttribute('href').'!';
                             $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'));
+                            $type = 'good';
                         }
-                        $this->add_message($msg,'good');
+                        $this->add_message($msg, $type);
                         $found++;
                     }
                 }
@@ -283,9 +295,7 @@ abstract class BFFFinder extends BFFFeed {
                     case 'HTTP/1.1 404 Not Found':
                         $this->set_response(false, $orig, $path, '404', '',
                             '"'.$url.'" was not found. The URL might be wrong, or the site currently unavailable for some reason.', 'problem');
-                        //if (!($path == '/' || $path == '')) {
-                        $this->add('Make sure your URL\'s domain and the path (after the /) are spelled correctly! To avoid typos, go to your blog site (not edit page) and copy-paste the URL from your address bar.', 'neutral');
-                        //}
+                        $this->add_message('Make sure your URL\'s domain and the path (after the /) are spelled correctly! To avoid typos, go to your blog site\'s front page (not an admin or "edit" page) and copy-and-paste the URL from your address bar into the feed address field above.', 'neutral');
                     break;
                     case 'HTTP/1.0 410 Gone':
                     case 'HTTP/1.1 410 Gone':
@@ -311,7 +321,7 @@ abstract class BFFFinder extends BFFFeed {
     // check if this *valid* URL falls into one of a few commonly seen
     // mistakes...
     public function valid_blog_url($url) {
-        $this->log('=================Is this url a common mistake? '. $url);
+        $this->log('Is this url a common mistake? '. $url);
         $parts = parse_url(strtolower(trim($url)));
         $this->log('parts of URL: '. print_r($parts, true));
         if (isset($parts['host'])) {
@@ -325,7 +335,7 @@ abstract class BFFFinder extends BFFFeed {
             $this->log('no "host" detected...'. print_r($parts, true));
             return false;
         }
-        $this->log('++++++++++++++++url '.$url.' could be a valid blog URL!!');
+        $this->log('url '.$url.' could be a valid blog URL!!');
         return true;
     }
 

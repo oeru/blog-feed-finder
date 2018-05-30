@@ -12,33 +12,35 @@ article.bff-form .container .entry-content p {
     margin: 2em;
     border: 2px #ddd solid;
     border-radius: 6px;
-    background: #eee;
+    background-color: #efefef;
     width: auto;
 }
 #bff-url {
-    width: 28em;
+    width: 30em;
 }
-#bff-submit {
+.bff-form .button {
     padding: 6px 8px;
-    color: #333;
-    background: #F7BD27;
+    color: #333 !important;
+    background-color: #97BB6D;
     border-radius: 5px;
-    box-shadow: 2px 2px 10px #000;
+    box-shadow: 2px 2px 10px #AAA;
+    text-transform: none;
+    text-decoration: none;
 }
-#bff-submit:hover {
+.bff-form .button:hover {
     color: #000;
-    box-shadow: 4px 4px 10px #000;
+    box-shadow: 4px 4px 10px #999;
     text-decoration: none;
 }
-#bff-submit:active {
-    box-shadow: 0px 0px 10px #000;
+.bff-form .button:active {
+    box-shadow: 0px 0px 10px #999;
     text-decoration: none;
 }
-#bff-submit:visited {
+.bff-form .button:visited {
     text-decoration: none;
 }
 #bff-feedback, #bff-feeds {
-    margin-top: 1em;
+    margin-top: 0.2em;
     padding: 6px 2px;
     /*color: #9C0B06;*/
     color: blue;
@@ -51,6 +53,7 @@ article.bff-form .container .entry-content p {
 }
 #bff-feedback p, #bff-feeds p {
     padding-left: 0px;
+    margin-bottom: 2px;
 }
 #bff-feedback p.neutral {
     color: blue;
@@ -60,4 +63,31 @@ article.bff-form .container .entry-content p {
 }
 #bff-feedback p.problem {
     color: red;
+}
+#bff-auth-notice {
+    /*margin: 6px;
+    padding: 6px;*/
+    width: auto;
+    margin: 0 28px 0 28px;
+    padding: 6px;
+    background: #FCD980;
+    border: solid 1px #F7BD27;
+    box-shadow: 4px 4px 10px #ccc;
+    border-radius: 5px;
+}
+#bff-auth-notice p {
+    padding: 6px;
+}
+#bff-auth-notice a {
+    padding: 0;
+    margin: 0;
+}
+#bff-feeds p, #bff-feeds li {
+    color: #333;
+}
+#bff-submit {
+    background: #F7BD27 !important;
+}
+#bff-feeds .button {
+    background-color: #97BB6D;
 }
