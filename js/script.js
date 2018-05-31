@@ -21,7 +21,7 @@ function compile_message(msgs, types) {
     return msg;
 }
 
-function compile_feeds(feeds, types, authenticated = true) {
+function compile_feeds(feeds, types, authenticated) {
     cnt = feeds.length;
     msg = '';
     msg += '<p class="instruction">We have identified the following supported feeds. ';
@@ -126,7 +126,7 @@ function get_course_id(str) {
 // jQuery seletors and related functions in that context
 jQuery(document).ready(function() {
     var $ = jQuery;
-    var feeds, feed_types, courses;
+    var feeds, feed_types, courses, authenticated;
     console.log('blog-feed-finder', bff_data);
 
     // because this uses jquery selectors, it's in here
@@ -219,6 +219,7 @@ jQuery(document).ready(function() {
                         feeds = data.feeds;
                         feed_types = data.feed_types;
                         courses = data.courses;
+                        authenticated = data.authenticated;
                         //
                         $('#bff-feed-list').attr('hidden', false);
                         $('#bff-feeds').attr('hidden', false);
@@ -229,11 +230,11 @@ jQuery(document).ready(function() {
                             console.log('feeds array: '+feeds);
                         }
                         if (feeds.hasOwnProperty('selected')) {
-                            enable_courses(data.authenticated);
+                            enable_courses(authenticated);
                         } else if (feeds.length == 0) {
                             $('#bff-feed-list').html('<p>No feeds found.</p>');
                         } else {
-                            $('#bff-feed-list').html(compile_feeds(feeds,feed_types,data.authenticated));
+                            $('#bff-feed-list').html(compile_feeds(feeds, feed_types, authenticated));
                             // add this in case it was removed by a previous run.
                             $('#bff-feed-list').addClass('bff-alert-box');
                             console.log('need to select a feed: ', feeds);
@@ -267,7 +268,7 @@ jQuery(document).ready(function() {
         console.log('completed select');
         // remove the "bff-alert-box" class
         $('#bff-feed-list').removeClass('bff-alert-box');
-        enable_courses();
+        enable_courses(authenticated);
         return true;
     });
 
