@@ -100,13 +100,19 @@ class BFFForm extends BFFCourse {
 
     // process the form. This to be replaced by an ajax form
     public function process() {
-        $this->log('in process with '. print_r($_POST, true));
+        $this->log('in process with _POST array: '. print_r($_POST, true));
         if (isset($_POST['action']) && $_POST['action'] == 'bff_submit') {
             $url = $_POST['url'];
             $this->log('looking at URL = '. $url);
             $this->process_url($url);
             // update the response object with the courses array...
             $this->response = $this->list_courses();
+            // alert script.js that the user is not logged in!
+            if (!is_user_logged_in()) {
+                $this->response['authenticated'] = false;
+            } else {
+                $this->response['authenticated'] = true;
+            }
             //$this->log('processing submit: returned response object: '. print_r($this->response, true));
             // sending the response object to be converted to JSON and returned to
             // the calling page
@@ -163,6 +169,7 @@ class BFFForm extends BFFCourse {
             $this->alert_anon_user();
         } else {
             $this->log('the current user *is* logged in!');
+
             // compile a list of courses the user's registered for
             //$this->list_courses();
         }
@@ -179,8 +186,8 @@ class BFFForm extends BFFCourse {
                 <p>Feedback...</p>
             </div>
             <div id="bff-feeds" class="feeds" hidden>
-                <div id="bff-feed-list" hidden></div>
-                <div id="bff-course-list" hidden></div>
+                <div id="bff-feed-list" class="bff-alert-box bff-info" hidden></div>
+                <div id="bff-course-list" class="bff-alert-box bff-info" hidden></div>
             </div>
         </form>
         <?php

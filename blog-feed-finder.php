@@ -55,7 +55,7 @@ define('BFF_ADMIN_MENU', 'BFF Settings');
 // other useful parameters
 define('BFF_MAX_FILE_READ_CHAR', 100000);
 // turn on debugging with true, off with false
-define('BFF_DEBUG', true);
+define('BFF_DEBUG', false);
 define('LOG_STREAM', getenv('LOG_STREAM'));
 
 // include the dependencies
