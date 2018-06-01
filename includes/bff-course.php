@@ -18,10 +18,19 @@ class BFFCourse extends BFFFinder {
     // show the user info if they're not logged in...
     public function alert_anon_user() {
     ?>
-    <div id="bff-auth-notice" class="bff-auth bff-alert-box">
-        <p class="bff-notice">You are not currently logged in. As such, you will not be able to link any blog feeds you find to your profile.<br/>You can <a
+    <div id="bff-unauth-notice" class="bff-auth bff-info bff-alert-box">
+        <p class="bff-notice">You are not currently logged in. As such, you will not be able to link any blog feed addresses you find to your profile.<br/>You can <a
             data-toggle="modal" title="Click to log in or register for OERu Courses" data-target="#userModal"><span
             class="glyphicon glyphicon-user"></span> log in or register</a> to link your feed(s) to any OERu courses for which you're registered.</p>
+    </div>
+    <?php
+    }
+
+    // show the user info if they are logged in...
+    public function inform_auth_user() {
+    ?>
+    <div id="bff-auth-notice" class="bff-auth bff-info bff-alert-box">
+        <p class="bff-notice">You can link any blog feeds addresses you find to any courses for which you are registered.</p>
     </div>
     <?php
     }

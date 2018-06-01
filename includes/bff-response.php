@@ -7,9 +7,9 @@ require BFF_PATH . '/includes/bff-base.php';
 abstract class BFFResponse extends BFFBase {
     protected static $response = array();
     protected $response_types = array(
-        'neutral' => "Info",
-        'problem' => "Problem",
-        'good' => "Good",
+        'neutral' => '<span class="bff-emoji bff-neutral">&nbsp;</span>',
+        'problem' => '<span class="bff-emoji bff-problem">&nbsp;</span>',
+        'good' => '<span class="bff-emoji bff-good">&nbsp;</span>',
     );
 
     // create a default response object, adding a message if given

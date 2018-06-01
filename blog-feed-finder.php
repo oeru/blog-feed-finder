@@ -48,6 +48,8 @@ define('BFF_MENU', 'BFF');
 define('BFF_SHORTCODE', 'bff_form');
 define('BFF_ID', 'blog-feed-finder');
 define('BFF_CLASS', 'bff-form');
+// support link for users of this plugin...
+define('BFF_SUPPORT_FORUM', 'https://forums.oeru.org/t/blog-feed-finder');
 // admin details
 define('BFF_ADMIN_SLUG', 'BFF_settings');
 define('BFF_ADMIN_TITLE', 'Blog Feed Finder Settings');
@@ -55,7 +57,7 @@ define('BFF_ADMIN_MENU', 'BFF Settings');
 // other useful parameters
 define('BFF_MAX_FILE_READ_CHAR', 100000);
 // turn on debugging with true, off with false
-define('BFF_DEBUG', false);
+define('BFF_DEBUG', true);
 define('LOG_STREAM', getenv('LOG_STREAM'));
 
 // include the dependencies

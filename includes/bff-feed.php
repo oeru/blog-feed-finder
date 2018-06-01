@@ -12,6 +12,12 @@ abstract class BFFFeed extends BFFResponse {
         'application/rss+xml' => 'RSS',
         'application/json' => 'JSON',
     );
+    protected $feed_classes = array(
+        'application/atom+xml' => 'bff-atom',
+        'application/rss+xml' => 'bff-rss',
+        'application/json' => 'bff-rss',
+        'application/xml' => 'bff-default'
+    );
 
     // add a feed description
     public function add_feed($url, $type, $title = '') {
@@ -29,6 +35,7 @@ abstract class BFFFeed extends BFFResponse {
         if (count($this->feeds)) {
             $this->response['feeds'] = $this->feeds;
             $this->response['feed_types'] = $this->feed_types;
+            $this->response['feed_classes'] = $this->feed_classes;
             //$this->response['feeds_msg'] = $this->list_feeds();
             if (count($this->feeds) == 1) {
                 $this->response['feed_selected'] = true;

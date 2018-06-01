@@ -15,13 +15,13 @@ function compile_message(msgs, types) {
     msg='<div class="bff-responses">';
     msgs.forEach(function(entry) {
         msg += '<p class="bff-response ' + entry.type + '">' +
-            types[entry.type] + ': ' + entry.message + '</p>';
+            types[entry.type] + ' ' + entry.message + '</p>';
     });
     msg += "</div>";
     return msg;
 }
 
-function compile_feeds(feeds, types, authenticated) {
+function compile_feeds(feeds, types, classes, authenticated) {
     cnt = feeds.length;
     msg = '';
     msg += '<p class="instruction">We have identified the following supported feeds. ';
@@ -32,12 +32,14 @@ function compile_feeds(feeds, types, authenticated) {
     msg += '<ul>';
     feeds.forEach(function(feed, num) {
         content_type = types[feed.type];
+        content_class = classes[feed.type];
         msg += '<li>';
         msg += '<a href="' + feed.url + '">' + feed.url + '</a>';
         if (feed.title != '') {
             msg += ', entitled "' + feed.title +'" ';
         }
-        msg += ' (' + content_type + ' format)';
+        //msg += ' (' + content_type + ' format)';
+        msg += '<span class="bff-feed '+content_class+'"></span>';
         if (authenticated) {
             console.log('user is authenticated');
             msg += ' <span id="bff-select-' + num + '" class="bff-select button">Select Feed</span>';
@@ -218,6 +220,7 @@ jQuery(document).ready(function() {
                         // visible between jQuery events...
                         feeds = data.feeds;
                         feed_types = data.feed_types;
+                        feed_classes = data.feed_classes;
                         courses = data.courses;
                         authenticated = data.authenticated;
                         //
@@ -234,7 +237,7 @@ jQuery(document).ready(function() {
                         } else if (feeds.length == 0) {
                             $('#bff-feed-list').html('<p>No feeds found.</p>');
                         } else {
-                            $('#bff-feed-list').html(compile_feeds(feeds, feed_types, authenticated));
+                            $('#bff-feed-list').html(compile_feeds(feeds, feed_types, feed_classes, authenticated));
                             // add this in case it was removed by a previous run.
                             $('#bff-feed-list').addClass('bff-alert-box');
                             console.log('need to select a feed: ', feeds);

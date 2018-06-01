@@ -13,6 +13,9 @@ article.bff-form .container .entry-content > p {
     background-color: #efefef;
     width: auto;
 }
+#blog-feed-finder a { color: #076A1F; font-weight: bold; }
+#blog-feed-finder a.hover { color: #000; }
+#blog-feed-finder a.visited { color: #237E39; }
 #bff-url { width: 32em; }
 .bff-form .button {
     padding: 6px 8px;
@@ -47,24 +50,21 @@ article.bff-form .container .entry-content > p {
 #bff-feedback p.neutral { color: blue; }
 #bff-feedback p.good { color: green; }
 #bff-feedback p.problem { color: red; }
-#bff-auth-notice {
-    width: auto;
-    margin: 0 28px 0 28px;
-    padding: 6px;
+#bff-unauth-notice {
+    margin-left: 28px;
     background: #FCD980;
     border: solid 1px #F7BD27;
-    box-shadow: 4px 4px 10px #ccc;
-    border-radius: 5px;
 }
-#bff-auth-notice p { padding: 6px; }
-#bff-auth-notice a {
+#bff-auth-notice { margin-left: 28px; }
+#bff-unauth-notice p, #bff-auth-notice p { padding: 6px; }
+#bff-unauth-notice a, #bff-auth-notice a {
     padding: 0;
     margin: 0;
 }
 #bff-feeds p, #bff-feeds li { color: #333; }
 #bff-submit { background: #F7BD27 !important; }
 #bff-feeds .button { background-color: #97BB6D; }
-.bff-info p { padding: 6px 12px; }
+.bff-info p { padding: 6px 12px; margin-bottom: 2px; }
 .bff-alert-box {
     width: auto;
     margin: 0 28px 0 0px;
@@ -77,12 +77,51 @@ article.bff-form .container .entry-content > p {
 .bff-info p.instruction { font-weight: bold; }
 #bff-feed-list { margin-bottom: 10px; }
 #bff-feed-list p.instruction { margin-bottom: 0px; }
+#bff-feed-list ul { list-style-type: none; }
 #bff-course-list li { margin-bottom: 6px; }
+/* traffic lights */
+/*.bff-circle {
+    display: block;
+    float: left;
+    width: 1em;
+    height: 1em;
+    border-radius: 0.5em;
+    color: #fff;
+    line-height: 1em;
+    background-color: #fff;
+}
+.bff-good { background-color: green; }
+.bff-neutral { background-color: blue; }
+.bff-problem { background-color: red; }
+*/
+
+.bff-emoji {
+    display: block;
+    float: left;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+}
+.bff-good { background-image: url(img/emoji-pleased.24x24.png); }
+.bff-neutral { background-image: url(img/emoji-neutral.24x24.png); }
+.bff-problem { background-image: url(img/emoji-confused.24x24.png); }
+
+.bff-feed {
+    display: block;
+    float: left;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    margin-right: 12px;
+}
+.bff-rss { background-image: url(img/bff-rss.32x32.png); }
+.bff-atom { background-image: url(img/bff-atom.32x32.png); }
+.bff-json { background-image: url(img/bff-json.32x32.png); }
+.bff-default { background-image: url(img/bff-feed.32x32.png); }
 
 /* Mobile changes */
 @media only screen and (max-width: 700px) {
     #bff-url {
         width: 20em;
     }
-
 }

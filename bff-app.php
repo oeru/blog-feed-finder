@@ -169,7 +169,8 @@ class BFFForm extends BFFCourse {
             $this->alert_anon_user();
         } else {
             $this->log('the current user *is* logged in!');
-
+            $this->inform_auth_user();
+            //$this->alert_anon_user();
             // compile a list of courses the user's registered for
             //$this->list_courses();
         }
@@ -253,9 +254,11 @@ class BFFForm extends BFFCourse {
         $post['post_slug'] = $slug;
         $post['post_title']  = 'Blog Feed Finder';
         $post['post_content'] = "<p>The Blog Feed Finder helps you work out the exact web address (URL) for your blog's feed.</p>"
-            ."<p>You can start by going to your blog in another browser tab or window...</p>"
-            ."<p>Copy the web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
-            ."and pasting it into the text field below.</p>[".BFF_SHORTCODE."]";
+            ."<p>Start by going to your blog - use another browser tab or window. "
+            ."Copy the web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
+            ."and paste it into the text box below.</p>"
+            ."<p>If you have questions, please post in the <a href=".BFF_SUPPORT_FORUM.">blog feed finder topic</a> in our support forum!</p>"
+            ."[".BFF_SHORTCODE."]";
         return $post;
     }
 }
