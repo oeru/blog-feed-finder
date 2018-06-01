@@ -39,7 +39,7 @@ function compile_feeds(feeds, types, classes, authenticated) {
             msg += ', entitled "' + feed.title +'" ';
         }
         //msg += ' (' + content_type + ' format)';
-        msg += '<span class="bff-feed '+content_class+'"></span>';
+        msg += '<span class="bff-feed '+content_class+'" title="'+content_type+' Format"></span>';
         if (authenticated) {
             console.log('user is authenticated');
             msg += ' <span id="bff-select-' + num + '" class="bff-select button">Select Feed</span>';
@@ -53,24 +53,26 @@ function compile_feeds(feeds, types, classes, authenticated) {
 }
 
 // if we have only one
-function selected_feed(feeds, types) {
+function selected_feed(feeds, types, classes) {
     cnt = feeds.length;
     msg = '';
     if (feeds.selected) {
         feed = feeds[feeds.selected];
         content_type = types[feed.type];
-        msg += '<p class="instructino">Selected feed:  ';
+        content_classes = classes[feed.type];
+        msg += '<p class="instruction"><span class="bff-feed '+content_classes+'" title="' + content_type + ' feed"></span>';
     } else if (cnt == 1) {
         feed = feeds[0];
         content_type = types[feed.type];
-        msg += '<p class="instruction">We have identified a valid ' + content_type + ' feed:</p>';
+        content_classes = classes[feed.type];
+        msg += '<p class="instruction"><span class="bff-feed '+content_classes+'" title="' + content_type + ' feed"></span> We found a feed!</p>';
         msg += '<p class="feed selected">';
     }
     msg += '<a href="' + feed.url +'">' + feed.url + '</a>';
     if (feed.title != '') {
-        msg += ', entitled "' + feed.title +'""';
+        msg += ', entitled "' + feed.title +'"';
     }
-    msg += '</p>';
+    msg += ' selected </p>';
     return msg;
 }
 
@@ -140,7 +142,7 @@ jQuery(document).ready(function() {
     // turn on the course list and let user assign a feed to Courses
     function enable_courses(authenticated) {
         console.log('enabling courses...');
-        $('#bff-feed-list').html(selected_feed(feeds,feed_types));
+        $('#bff-feed-list').html(selected_feed(feeds,feed_types,feed_classes));
         $('#bff-course-list').attr('hidden', false);
         if (authenticated) {
             console.log('user logged in.');
