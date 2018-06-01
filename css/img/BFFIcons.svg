@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="128"
+   height="128"
+   viewBox="0 0 256 256"
+   id="RSSicon"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="BFFIcons.svg"
+   inkscape:export-filename="/home/dave/Projects/wordpress/wpms/wordpress/wp-content/plugins/blog-feed-finder/images/bff-feed.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150">
+  <title
+     id="title4366">Feed icons, based on previous work.</title>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1235"
+     inkscape:window-height="737"
+     id="namedview19"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="1.3037281"
+     inkscape:cx="-128.88508"
+     inkscape:cy="68.168836"
+     inkscape:window-x="1428"
+     inkscape:window-y="361"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer4" />
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Feed icons, based on previous work.</dc:title>
+        <dc:source>https://commons.wikimedia.org/wiki/File:Feed_Icon_Bl-Or.svg</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>By Benoit Rochon (http://www.feedicons.com/) [MPL 1.1 (https://www.mozilla.org/MPL/1.1/), GPL (http://www.gnu.org/licenses/gpl.html) or LGPL (http://www.gnu.org/licenses/lgpl.html)], via Wikimedia Commons</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by/3.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3">
+    <linearGradient
+       x1="0.085000001"
+       y1="0.085000001"
+       x2="0.91500002"
+       y2="0.91500002"
+       id="RSSg">
+      <stop
+         id="stop6"
+         style="stop-color:#0e0e0e;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop8"
+         style="stop-color:#000000;stop-opacity:1"
+         offset="0.1071" />
+      <stop
+         id="stop10"
+         style="stop-color:#2d2d2d;stop-opacity:1"
+         offset="0.35030001" />
+      <stop
+         id="stop12"
+         style="stop-color:#606060;stop-opacity:1"
+         offset="0.5" />
+      <stop
+         id="stop14"
+         style="stop-color:#1e1e1e;stop-opacity:1"
+         offset="0.70160002" />
+      <stop
+         id="stop16"
+         style="stop-color:#121111;stop-opacity:1"
+         offset="0.88660002" />
+      <stop
+         id="stop18"
+         style="stop-color:#060606;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <rect
+     width="256"
+     height="256"
+     rx="55"
+     ry="55"
+     x="0"
+     y="0"
+     id="rect20"
+     style="fill:#000000" />
+  <rect
+     width="246"
+     height="246"
+     rx="50"
+     ry="50"
+     x="5"
+     y="5"
+     id="rect22"
+     style="fill:#4d4d4d;fill-opacity:1" />
+  <rect
+     width="236"
+     height="236"
+     rx="47"
+     ry="47"
+     x="10"
+     y="10"
+     id="rect24"
+     style="fill:url(#RSSg)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Atom"
+     style="display:none">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:80px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ff8000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="23.050846"
+       y="210.16949"
+       id="text4170"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4172"
+         x="23.050846"
+         y="210.16949">Atom</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="RSS"
+     style="display:none">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:80px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff8000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="47.425915"
+       y="214.42426"
+       id="text4170-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4172-5"
+         x="47.425915"
+         y="214.42426">RSS</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="JSON"
+     style="display:none">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:80px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ff8000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="38.622284"
+       y="213.12109"
+       id="text4170-4-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4172-5-7"
+         x="38.622284"
+         y="213.12109">JSON</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="default"
+     style="display:inline">
+    <circle
+       cx="64.228813"
+       cy="192.17796"
+       r="24"
+       id="circle26"
+       style="fill:#ff8000;fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       d="m 156.22881,216.17797 -34,0 a 82,82 0 0 0 -81.999996,-82 l 0,-34 a 116,116 0 0 1 115.999996,116 z"
+       id="path28"
+       style="fill:#ff8000;fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       d="M 180.22881,216.17797 A 140,140 0 0 0 40.228814,76.177966 l 0,-35 A 175,175 0 0 1 215.22881,216.17797 Z"
+       id="path30"
+       style="fill:#ff8000;fill-opacity:1" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="default feed"
+     style="display:none">
+    <g
+       transform="translate(-2.1694866,-7.5932219)"
+       id="g4253">
+      <circle
+         style="display:inline;fill:#ff8000;fill-opacity:1"
+         id="circle26-1-4"
+         r="12"
+         cy="118.52967"
+         cx="97.334732" />
+      <path
+         style="display:inline;fill:#ff8000;fill-opacity:1"
+         id="path28-8-2"
+         d="m 143.33475,130.52965 -17,0 A 41,41 0 0 0 85.334745,89.529655 l 0,-16.99999 a 58,58 0 0 1 58.000005,57.999985 z"
+         inkscape:connector-curvature="0" />
+      <path
+         style="display:inline;fill:#ff8000;fill-opacity:1"
+         id="path30-3-2"
+         d="M 155.33475,130.52965 A 70,70 0 0 0 85.334745,60.529655 l 0,-17.5 a 87.5,87.5 0 0 1 87.500005,87.499995 z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="scratch" />
+</svg>
