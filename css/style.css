@@ -118,6 +118,14 @@ article.bff-form .container .entry-content > p {
 .bff-atom { background-image: url(img/bff-atom.32x32.png); }
 .bff-json { background-image: url(img/bff-json.32x32.png); }
 .bff-default { background-image: url(img/bff-feed.32x32.png); }
+.bff-success {
+    font-weight: bold;
+    color: #fff;
+    padding: 5px;
+    background: green;
+    border-radius: 5px;
+}
+
 
 /* Mobile changes */
 @media only screen and (max-width: 700px) {

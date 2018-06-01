@@ -61,18 +61,19 @@ function selected_feed(feeds, types, classes) {
         content_type = types[feed.type];
         content_classes = classes[feed.type];
         msg += '<p class="instruction"><span class="bff-feed '+content_classes+'" title="' + content_type + ' feed"></span>';
+        end = ' selected</p>';
     } else if (cnt == 1) {
         feed = feeds[0];
         content_type = types[feed.type];
         content_classes = classes[feed.type];
-        msg += '<p class="instruction"><span class="bff-feed '+content_classes+'" title="' + content_type + ' feed"></span> We found a feed!</p>';
-        msg += '<p class="feed selected">';
+        msg += '<p class="instruction"><span class="bff-feed '+content_classes+'" title="' + content_type + ' feed"></span> We found a feed - ';
+        end = '</p>';
     }
     msg += '<a href="' + feed.url +'">' + feed.url + '</a>';
     if (feed.title != '') {
         msg += ', entitled "' + feed.title +'"';
     }
-    msg += ' selected </p>';
+    msg += end;
     return msg;
 }
 
@@ -156,7 +157,7 @@ jQuery(document).ready(function() {
     // show that a course has been updated
     function update_course_feed(tag, id, url) {
         console.log('course '+tag+' updated to '+url);
-        $('#bff-original-'+tag).html('updated blog feed to <a href="'+url+'">'+url+'</a>');
+        $('#bff-original-'+tag).html('updated blog feed to <a href="'+url+'">'+url+'</a>&nbsp;&nbsp;<span class="bff-success">Success</span>');
         $('#bff-original-'+tag).addClass('updated');
         selector = '#bff-set-'+tag+'-'+id;
         console.log('turning off button: "'+selector+'"');
@@ -304,6 +305,7 @@ jQuery(document).ready(function() {
                     id = get_course_id(button_id);
                     console.log('Success - '+tag+'('+id+')');
                     update_course_feed(tag, id, feed.url);
+                    $('.bff-success').fadeOut(4000);
                 }
                 return true;
             },
