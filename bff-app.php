@@ -258,7 +258,10 @@ class BFFForm extends BFFCourse {
             ."Copy the web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
             ."and paste it into the text box below.</p>"
             ."<p>If you have questions, please post in the <a href=".BFF_SUPPORT_FORUM.">blog feed finder topic</a> in our support forum!</p>"
-            ."[".BFF_SHORTCODE."]";
+            ."[".BFF_SHORTCODE."]"
+            ."<div class='credits'>"
+            ."<p class='credit'>Credits: Emoji icons from the <a href='https://commons.wikimedia.org/wiki/Category:Noto_Color_Emoji_Oreo'>Noto Color Emoji Oreo</a> set (under Apache 2.0 license), and the <a href=\"https://commons.wikimedia.org/wiki/File:Question_Mark_Icon_-_Blue_Box.svg\">question mark icon</a> is by <a href=\"https://commons.wikimedia.org/wiki/User:Willscrlt\">Will Murray</a> (CC-By-SA).</p>"
+            ."</div>";
         return $post;
     }
 }

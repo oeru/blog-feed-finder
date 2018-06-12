@@ -4,6 +4,12 @@ article.bff-form .container { background: #fefefe; }
 article.bff-form .container .entry-content > p {
     padding-left: 28px;
 }
+article.bff-form .container .credit {
+    padding-left: 28px;
+    padding-bottom: 16px;
+    font-size: 80%;
+    opacity: 0.5;
+}
 #blog-feed-finder {
     /*border: dotted 1px #ccc;*/
     padding: 20px;
@@ -95,8 +101,13 @@ article.bff-form .container .entry-content > p {
 .bff-problem { background-color: red; }
 */
 
+#bff-feeds .instruction {
+    vertical-align: middle;
+    line-height: 32px;
+}
+
 .bff-emoji {
-    display: block;
+    display: inline-block;
     float: left;
     width: 24px;
     height: 24px;
@@ -107,7 +118,7 @@ article.bff-form .container .entry-content > p {
 .bff-problem { background-image: url(img/emoji-confused.24x24.png); }
 
 .bff-feed {
-    display: block;
+    display: inline-block;
     float: left;
     width: 32px;
     height: 32px;
@@ -118,6 +129,7 @@ article.bff-form .container .entry-content > p {
 .bff-atom { background-image: url(img/bff-atom.32x32.png); }
 .bff-json { background-image: url(img/bff-json.32x32.png); }
 .bff-default { background-image: url(img/bff-feed.32x32.png); }
+
 .bff-success {
     font-weight: bold;
     color: #fff;
@@ -126,6 +138,15 @@ article.bff-form .container .entry-content > p {
     border-radius: 5px;
 }
 
+.bff-detail {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    margin-left: 6px;
+    background-image: url(img/help.16x16.png);
+    background-repeat: none;
+}
 
 /* Mobile changes */
 @media only screen and (max-width: 700px) {

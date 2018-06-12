@@ -77,7 +77,7 @@ abstract class BFFFinder extends BFFFeed {
                     $this->log('failed to find a feed at: '. $url);
                     $this->set_response(true, $response['orig_url'], $response['path'],
                         'No feed found', $response['redirect'],
-                        'We weren\'t able to find a feed on '.$url.'... it\'s possible the site just doesn\'t have one.', 'problem');
+                        'We weren\'t able to find a feed on this site.', 'Perhaps there is no feed at the site you specified, '.$url, 'problem');
                 }
             }
         }
@@ -138,7 +138,9 @@ abstract class BFFFinder extends BFFFeed {
                         if ($link->getAttribute('title') != '') {
                             // allow feeds that don't have "Comments Feed" in the title...
                             if (strpos($link->getAttribute('title'), 'Comments Feed') == false) {
-                                $msg = ' "'.$type_name.'" feed "'
+                                $msg = ' Feed "'
+                                    .$link->getAttribute('title').'" found.';
+                                $detail= ' "'.$type_name.'" feed "'
                                     .$link->getAttribute('title').'" found at '
                                     .$link->getAttribute('href').'...';
                                 // add this feed...
@@ -147,18 +149,21 @@ abstract class BFFFinder extends BFFFeed {
                                 $type = 'good';
                             } else {
                                 // don't add this feed
-                                $msg = ' "'.$type_name.'" feed "'
+                                $msg = ' Comment feed "'
+                                    .$link->getAttribute('title').'" found - <em>probably not what you want</em>.';
+                                $detail = ' "'.$type_name.'" feed "'
                                     .$link->getAttribute('title').'" found at '
-                                    .$link->getAttribute('href').'. This is probably not what we want...';
+                                    .$link->getAttribute('href').'. This is probably not what we want, as it\'s specific to comments to your posts...';
                                 $type = 'neutral';
                             }
                         } else {
-                            $msg = 'Untitled "'.$type_name.'" feed found at address '
+                            $msg = 'Feed found.';
+                            $detail = 'Untitled "'.$type_name.'" feed found at address '
                                 .$link->getAttribute('href').'!';
                             $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'));
                             $type = 'good';
                         }
-                        $this->add_message($msg, $type);
+                        $this->add_message($msg, $detail, $type);
                         $found++;
                     }
                 }
@@ -244,12 +249,16 @@ abstract class BFFFinder extends BFFFeed {
                 if (!isset($parts['host'])) {
                     $this->log('no host specified... bailing');
                     $this->set_response(false, $url);
-                    $this->add_message('Unfortunately, "'.$url.'" isn\'t a valid web address - it requires at least a "top level domain", i.e. a ".", followed by a few letters (e.g. .com).', 'problem');
+                    $this->add_message('Unfortunately, that isn\'t a valid web address. Please try again.',
+                        '"'.$url.'" isn\'t a valid web address - it requires at least a "top level domain", i.e. a ".", followed by a few letters, for example ".com". Best thing to do is to go to you blog and copy-and-paste the web address from your browser\'s address bar. Not sure what we mean by "blog"? Check out our OERU <a href="'
+                        .BFF_BLOG_SUPPORT.'">Learner Support Site</a>.', 'problem');
                     return false;
                 }
             } else {
                 $this->log('unable to parse URL: '.$url);
-                $this->set_response(false, $orig, $path, '404', '', 'This URL is not valid!', 'problem');
+                $this->set_response(false, $orig, $path, '404', '', 'This isn\t a valid web address.',
+                    'A valid web address needs text like <strong>domain.tld</strong> - tld = "Top Level Domain", like country-specific endings or .com, .org, .net, and others. It can also have an optional path, like "/blog/" in "mysite.org.nz/blog/"',
+                    'problem');
             }
             // now query the URL and work out the response
             $this->log('testing for the existence of '.$url);
@@ -262,58 +271,79 @@ abstract class BFFFinder extends BFFFeed {
                     case 'HTTP/1.0 200 OK':
                     case 'HTTP/1.1 200 OK':
                         $this->log('Yay! Returning valid url: '.$url);
-                        $this->set_response(true, $orig, $path, '200', '', '"'.$orig.'" found. It is a valid address!', 'good');
+                        $this->set_response(true, $orig, $path, '200', '', 'Ok, we\'ve verified the web address you entered points to a real site.',
+                            '"'.$orig.'" found. It is a valid address!', 'good');
                     break;
                     case 'HTTP/1.0 301 Moved Permanently':
                     case 'HTTP/1.1 301 Moved Permanently':
                         if ($redirect = $this->get_redirect($headers)) {
-                            $this->set_response(true, $orig, $path, '301', $redirect,
+                            $this->set_response(true, $orig, $path, '301', $redirect, 'The web address you supplied redirects to another one - nothing wrong with that.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "permanent redirect" (301)', 'good');
                         } else {
-                            $this->set_response(false, $orig, $path, '301', '', 'Got redirect code (301), but no redirect destination!', 'bad');
+                            $this->set_response(false, $orig, $path, '301', '', 'Uh oh, your web address redirects to... a non-existent place.',
+                                'Got redirect code (301), but no redirect destination! Either your link is incorrect, or whoever manages the website has made a configuration error somewhere.',
+                                'bad');
                         }
                     break;
                     case 'HTTP/1.0 302 Moved Temporarily':
                     case 'HTTP/1.1 302 Moved Temporarily':
                         if ($redirect = $this->get_redirect($headers)) {
-                            $this->set_response(true, $orig, $path, '302', $redirect,
+                            $this->set_response(true, $orig, $path, '302', $redirect, 'Your web address redirects to another one, no problems.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'good');
                         } else {
-                            $this->set_response(false, $orig, $path, '302', '', 'Got redirect code (302), but no redirect destination!', 'bad');
+                            $this->set_response(false, $orig, $path, '302', '', 'Uh oh, your web address redirects to... a non-existent place.',
+                                'Got redirect code (302), but no redirect destination! Either your link is incorrect, or whoever manages the website has made a configuration error somewhere.',
+                                'bad');
                         }
                     break;
                     case 'HTTP/1.0 302 Found':
                     case 'HTTP/1.1 302 Found':
                         if ($redirect = $this->get_redirect($headers)) {
                             $this->set_response(false, $orig, $path, '302', $redirect,
+                                'Your web address redirects to another one, no problems.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'neutral');
                         } else {
-                            $this->set_response(false, $orig, $path, '302', '', 'Got redirect code (302), but no redirect destination!', 'bad');
+                            $this->set_response(false, $orig, $path, '302', '', 'Got redirect code (302), but no redirect destination!',
+                                'Got redirect code (302), but no redirect destination! Either your link is incorrect, or whoever manages the website has made a configuration error somewhere.',
+                                'bad');
                         }
                     break;
                     case 'HTTP/1.0 404 Not Found':
                     case 'HTTP/1.1 404 Not Found':
                         $this->set_response(false, $orig, $path, '404', '',
-                            '"'.$url.'" was not found. The URL might be wrong, or the site currently unavailable for some reason.', 'problem');
-                        $this->add_message('Make sure your URL\'s domain and the path (after the /) are spelled correctly! To avoid typos, go to your blog site\'s front page (not an admin or "edit" page) and copy-and-paste the URL from your address bar into the feed address field above.', 'neutral');
+                            'Your web address wasn\'t found',
+                            '"'.$url.'" was not found. The URL might be wrong, or the site currently unavailable for some reason.',
+                            'problem');
+                        $this->add_message('Make sure your URL\'s domain and the path (after the /) are spelled correctly! To avoid typos, go to your blog site\'s front page (not an admin or "edit" page) and copy-and-paste the URL from your address bar into the feed address field above.',
+                            'neutral');
                     break;
                     case 'HTTP/1.0 410 Gone':
                     case 'HTTP/1.1 410 Gone':
                         $this->set_response(false, $orig, $path, '410', '',
+                            'The web address you\'ve provided once existed, but it\'s now reported as "gone"...',
                             '"'.$orig.'" was valid, but its host is now listing it as "Gone".');
                     break;
                     default:
                         $this->log('got unknown result: '. $headers[0]);
-                        $this->set_response(false, $orig, $path, '', 'unknown', 'Looking for "'.$orig.'" got an unexpected result: '.$headers[0], 'problem');
+                        $this->set_response(false, $orig, $path, '', 'unknown',
+                            'Sorry, no website was found, but we have no idea why. Maybe a problem with our network? Try again in a little while...',
+                            'Looking for "'.$orig.'" got an unexpected result: '.$headers[0],
+                            'problem');
                     break;
                 }
             } else {
                 $this->log('no headers returned');
-                $this->set_response(false, $url, '', 'unknown', '', 'The web address entered, "'.$url.'", isn\'t responding. Either the site is down, incredibly slow, or it doesn\'t exist - perhaps a spelling error?', 'problem');
+                $this->set_response(false, $url, '', 'unknown', '',
+                    'Your web address isn\'t responding. The site might be down, or perhaps there\'s a network problem between its server and our server.',
+                    'The web address entered, "'.$url.'", isn\'t responding. Either the site is down, incredibly slow, or it doesn\'t exist - perhaps a spelling error?',
+                    'problem');
             }
         } else {
             $this->log('empty URL');
-            $this->set_response(false, '', '', 'unknown', '', 'No web address entered!', 'problem');
+            $this->set_response(false, '', '', 'unknown', '',
+                'No web address entered!',
+                'Perhaps you need to click your pointer in the text field, or you need to tap the field first (if you\'re on a touch device).',
+                'problem');
         }
         return true;
     }
@@ -328,7 +358,7 @@ abstract class BFFFinder extends BFFFeed {
             if (in_array($parts['host'], $this->bad_hosts)) {
                 $this->log('-----------------url '.$url.' has a bad host: '.$parts['host']);
                 $this->response['valid_feed'] = false;
-                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident. Have a look at our support site\'s "<a href=\'https://course.oeru.org/support/studying-courses/course-blog/\'>blog</a>" section...', 'problem');
+                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident.', 'To learn more, have a look at our support site\'s "<a href="'.BFF_BLOG_SUPPORT.'">blog</a>" section...', 'problem');
                 return false;
             }
         } else {

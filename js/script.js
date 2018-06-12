@@ -1,5 +1,16 @@
 /* created by Dave Lane, dave@oerfoundation.org, https://oeru.org */
 
+function addslashes(string) {
+    return string.replace(/\\/g, '\\\\').
+        replace(/\u0008/g, '\\b').
+        replace(/\t/g, '\\t').
+        replace(/\n/g, '\\n').
+        replace(/\f/g, '\\f').
+        replace(/\r/g, '\\r').
+        replace(/'/g, '\\\'').
+        replace(/"/g, '\\"');
+}
+
 function get_url(data) {
     if (data.hasOwnProperty('redirect') && data.redirect != "") {
         console.log('Redirect... ', data.redirect);
@@ -14,8 +25,16 @@ function get_url(data) {
 function compile_message(msgs, types) {
     msg='<div class="bff-responses">';
     msgs.forEach(function(entry) {
+        console.log('entry = '+JSON.stringify(entry));
         msg += '<p class="bff-response ' + entry.type + '">' +
-            types[entry.type] + ' ' + entry.message + '</p>';
+            types[entry.type] + ' ' + entry.message;
+        if (entry.detail != '') {
+            console.log('entry detail = '+entry.detail);
+            escaped = entry.detail.replace(/'/g, '&#39;');
+            console.log('escaped = '+escaped);
+            msg += ' <a class="bff-detail" title=\''+escaped+'\'></a>';
+        }
+        msg += '</p>';
     });
     msg += "</div>";
     return msg;

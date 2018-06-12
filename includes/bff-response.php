@@ -14,21 +14,22 @@ abstract class BFFResponse extends BFFBase {
 
     // create a default response object, adding a message if given
     public function set_response($valid = false, $orig = '', $path = '', $code = '',
-        $redirect = '', $message = '', $type = 'neutral') {
+        $redirect = '', $message = '', $detail = '', $type = 'neutral') {
         $this->response['valid_url'] = $valid;
         $this->response['orig_url'] = $orig;
         $this->response['path'] = $path;
         $this->response['code'] = $code;
         $this->response['redirect'] = $redirect;
         if ($message != '') {
-            $this->add_message($message, $type);
+            $this->add_message($message, $detail, $type);
         }
     }
 
     // add another message to the response object
-    public function add_message($msg, $type = 'neutral') {
+    public function add_message($msg, $detail = '', $type = 'neutral') {
         $this->response['messages'][] = array(
             'message' => $msg,
+            'detail' => $detail,
             'type' => $type,
         );
     }
