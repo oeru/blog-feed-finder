@@ -101,10 +101,20 @@ article.bff-form .container .credit {
 .bff-problem { background-color: red; }
 */
 
-#bff-feeds .instruction {
+#bff-feeds .instruction, #bff-feeds li {
     vertical-align: middle;
+    min-height: 32px;
+    padding-bottom: 4px;
+}
+
+#bff-feeds li {
+    margin-bottom: 4px;
+}
+
+#bff-feeds .instruction {
     line-height: 32px;
 }
+
 
 .bff-emoji {
     display: inline-block;
