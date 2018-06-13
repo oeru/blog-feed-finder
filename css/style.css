@@ -146,6 +146,7 @@ article.bff-form .container .credit {
     -webkit-hyphens: auto;
     -moz-hyphens: auto;
     hyphens: auto;
+    margin-bottom: 0;
 }
 
 .bff-tooltip {
