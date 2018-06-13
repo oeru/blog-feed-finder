@@ -236,7 +236,7 @@ abstract class BFFFinder extends BFFFeed {
                 // if no scheme was specified, default to http://
                 if (!isset($parts['scheme'])) {
                     $this->log('no scheme specified... adding http');
-                    $this->add_message('We fixed your address to add an http:// to the front.','We\'ve added an http:// \'scheme\' to your address - a valid scheme is a necessary part of a web address', 'neutral');
+                    $this->add_message('We completed your address by adding http:// to the front.','We\'ve added an http:// \'scheme\' to your address - a valid scheme is a necessary part of a web address', 'neutral');
                     $parts = parse_url('http://'.$path);
                 }
                 // reconstruct the URL
