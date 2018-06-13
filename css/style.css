@@ -85,21 +85,6 @@ article.bff-form .container .credit {
 #bff-feed-list p.instruction { margin-bottom: 0px; }
 #bff-feed-list ul { list-style-type: none; }
 #bff-course-list li { margin-bottom: 6px; }
-/* traffic lights */
-/*.bff-circle {
-    display: block;
-    float: left;
-    width: 1em;
-    height: 1em;
-    border-radius: 0.5em;
-    color: #fff;
-    line-height: 1em;
-    background-color: #fff;
-}
-.bff-good { background-color: green; }
-.bff-neutral { background-color: blue; }
-.bff-problem { background-color: red; }
-*/
 
 #bff-feeds .instruction, #bff-feeds li {
     vertical-align: middle;
@@ -114,7 +99,6 @@ article.bff-form .container .credit {
 #bff-feeds .instruction {
     line-height: 32px;
 }
-
 
 .bff-emoji {
     display: inline-block;
@@ -148,19 +132,35 @@ article.bff-form .container .credit {
     border-radius: 5px;
 }
 
-.bff-detail {
+.bff-popup {
+    width: 400px;
+    border: solid 1px #F7BD27;
+    background-color: #fff;
+    box-shadow: 4px 4px 10px #ccc;
+    border-radius: 5px;
+}
+
+.bff-popup p {
+    word-wrap: normal;
+    word-break: normal;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+.bff-tooltip {
     display: inline-block;
     width: 16px;
     height: 16px;
     line-height: 16px;
     margin-left: 6px;
-    background-image: url(img/help.16x16.png);
-    background-repeat: none;
+    /*background-image: url(img/help.16x16.png);*/
+    background-image: url(img/info.16x16.png);
+    background-repeat: no-repeat;
 }
 
 /* Mobile changes */
 @media only screen and (max-width: 700px) {
-    #bff-url {
-        width: 20em;
-    }
+    #bff-url { width: 20em; }
+    .bff-popup { width: 250px; }
 }

@@ -22,24 +22,6 @@ function get_url(data) {
     return url;
 }
 
-function compile_message(msgs, types) {
-    msg='<div class="bff-responses">';
-    msgs.forEach(function(entry) {
-        console.log('entry = '+JSON.stringify(entry));
-        msg += '<p class="bff-response ' + entry.type + '">' +
-            types[entry.type] + ' ' + entry.message;
-        if (entry.detail != '') {
-            console.log('entry detail = '+entry.detail);
-            escaped = entry.detail.replace(/'/g, '&#39;');
-            console.log('escaped = '+escaped);
-            msg += ' <a class="bff-detail" title=\''+escaped+'\'></a>';
-        }
-        msg += '</p>';
-    });
-    msg += "</div>";
-    return msg;
-}
-
 function compile_feeds(feeds, types, classes, authenticated) {
     cnt = feeds.length;
     msg = '';
@@ -153,6 +135,34 @@ jQuery(document).ready(function() {
     var feeds, feed_types, courses, authenticated;
     console.log('blog-feed-finder', bff_data);
 
+    function compile_message(msgs, types) {
+        msg='<div id="bff-responses" class="bff-responses">';
+        num = 0;
+        msgs.forEach(function(entry) {
+            console.log('entry = '+JSON.stringify(entry));
+            msg += '<p class="bff-response ' + entry.type + '">' +
+                types[entry.type] + ' ' + entry.message;
+            if (entry.detail != '') {
+                console.log('entry detail = '+entry.detail);
+                //escaped = entry.detail.replace(/'/g, '&#39;');
+                //console.log('escaped = '+escaped);
+                id = 'popupInfo-'+num;
+                //msg += '<a href="#'+id+'" class="bff-detail bff-info-tooltip ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
+                //msg += '<a href="#'+id+'" class="bff-tooltip ui-btn" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
+                msg += '<a href="#'+id+'" data-rel="popup" data-transition="pop" class="bff-tooltip" title="Learn more"></a>';
+                msg += '</p>';
+                msg += '<div data-role="popup" id="'+id+'" class="ui-content bff-popup"">';
+                msg += '    <p>'+entry.detail+'</p>';
+                msg += '</div>';
+            } else {
+                msg += '</p>';
+            }
+            num += 1;
+        });
+        msg += "</div>";
+        return msg;
+    }
+
     // because this uses jquery selectors, it's in here
     function replace_url(data) {
         url = get_url(data);
@@ -236,6 +246,9 @@ jQuery(document).ready(function() {
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
                     $('#bff-feedback').html(compile_message(msgs, types));
+                    //$('#bff-responses .bff-tooltip').trigger('refresh');
+                    //$('#bff-responses .bff-tooltip').trigger('refresh');
+                    $('#bff-responses').trigger('create');
                     replace_url(data);
                     if (data.hasOwnProperty('feeds')) {
                         // assign these to global variables to make them

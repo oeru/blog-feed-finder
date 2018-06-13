@@ -15,8 +15,13 @@ class BFFForm extends BFFCourse {
     // this starts everything...
     public function init() {
         $this->log('in init');
-        $this->register_scripts();
-        $this->register_styles();
+        /*//$this->register_scripts();
+        wp_register_script('bff-script', plugins_url('js/script.js', __FILE__));
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('bff-script');
+        //$this->register_styles();
+        wp_register_style('bff-style', plugins_url('css/style.css', __FILE__));
+        wp_enqueue_style('bff-style');*/
         // register actions
         add_shortcode(BFF_SHORTCODE, array($this, 'shortcode'));
         // allows us to add a class to our post
@@ -25,15 +30,28 @@ class BFFForm extends BFFCourse {
         // and create the post to hold short code...
         $this->create_post(BFF_SLUG);
         $this->log('setting up scripts');
+        // add jquery mobile js and css loading
+        if (BFF_DEBUG) {
+            $js_mobile = 'http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // debugging
+            $css_mobile = 'http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.css'; // debugging
+        } else {
+            $js_mobile = 'http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // production
+            $css_mobile = 'http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css'; // production
+        }
+        wp_enqueue_script('bff-mobile-script', $js_mobile, array('jquery'), '1.4.5');
+        wp_register_style('bff-mobile-style', $css_mobile, '', '1.4.5');
+        wp_enqueue_style('bff-mobile-style', $css_mobile, '', '1.4.5');
         // add the ajax handlers
         wp_enqueue_script('bff-script', BFF_URL.'js/script.js', array(
-            'jquery', 'jquery-form'
-        ));
+            'jquery', 'jquery-form'));
         wp_localize_script('bff-script', 'bff_data', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce_submit' => wp_create_nonce('bff-submit-nonce'),
             'nonce_set' => wp_create_nonce('bff-set-nonce'),
         ));
+        // our css
+        wp_register_style('bff-style', plugins_url('css/style.css', __FILE__));
+        wp_enqueue_style('bff-style');
         // this enables the feedfinder service for authenticated users...
         add_action('wp_ajax_bff_submit', array($this, 'ajax_submit'));
         // this allows users who aren't authenticated to use the feedfinder
@@ -41,23 +59,6 @@ class BFFForm extends BFFCourse {
         // this enables the setblogfeed service for authenticated users...
         add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
         $this->log('finished setting up scripts');
-    }
-
-    protected function register_scripts() {
-        $this->log('in register_scripts');
-        //register
-        wp_register_script('bff-script', plugins_url('js/script.js', __FILE__));
-        //enqueue
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('bff-script');
-    }
-
-    protected function register_styles() {
-        $this->log('in register_styles');
-        //register
-        wp_register_style('bff-style', plugins_url('css/style.css', __FILE__));
-        //enqueue
-        wp_enqueue_style('bff-style');
     }
 
     // the function called after the bff-submit button is clicked in our form
@@ -181,7 +182,7 @@ class BFFForm extends BFFCourse {
         ?>
         <form id="<?php echo BFF_ID; ?>" class="<?php echo BFF_CLASS; ?>" target="#">
             <label class="<?php echo BFF_CLASS; ?>"><?php echo __('Find your blog\'s feed address!'); ?></label><br/>
-            <input id="bff-url" class="url" type="text" name="bff-url" value="" />
+            <input data-role="none" id="bff-url" class="url" type="text" name="bff-url" value="" />
             <span id="bff-submit" class="submit button" href="#">Submit</span><br/>
             <div id="bff-feedback" class="feedback">
                 <p>Feedback...</p>
