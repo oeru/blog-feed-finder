@@ -151,7 +151,7 @@ jQuery(document).ready(function() {
                 //msg += '<a href="#'+id+'" class="bff-tooltip ui-btn" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
                 msg += '<a href="#'+id+'" data-rel="popup" data-transition="pop" class="bff-tooltip" title="Learn more"></a>';
                 msg += '</p>';
-                msg += '<div data-role="popup" id="'+id+'" class="ui-content bff-popup"">';
+                msg += '<div data-role="popup" id="'+id+'" class="ui-content bff-popup" hidden="true">';
                 msg += '    <p>'+entry.detail+'</p>';
                 msg += '</div>';
             } else {
