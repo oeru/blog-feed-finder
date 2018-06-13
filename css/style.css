@@ -140,7 +140,7 @@ article.bff-form .container .credit {
     border-radius: 5px;
 }
 
-.bff-popup p {
+#bff-feedback .bff-popup p {
     word-wrap: normal;
     word-break: normal;
     -webkit-hyphens: auto;
