@@ -174,7 +174,7 @@ a.bff-close.ui-btn-left {
 }
 
 /* Mobile changes */
-@media only screen and (max-width: 700px) {
+@media (max-width: 480px) {
     #bff-url { width: 20em; }
     .bff-popup { width: 250px; }
 }
