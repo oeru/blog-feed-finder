@@ -49,11 +49,11 @@ class BFFForm extends BFFCourse {
         add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
         // add jquery mobile js and css loading
         if (BFF_DEBUG) {
-            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // debugging
-            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.css'; // debugging
+            $js_mobile = BFF_URL.'js/jquery.mobile.custom.js'; // debugging
+            $css_mobile = BFF_URL.'css/jquery.mobile.custom.structure.css'; // debugging
         } else {
-            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // production
-            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css'; // production
+            $js_mobile = BFF_URL.'js/jquery.mobile.custom.min.js'; // production
+            $css_mobile = BFF_URL.'css/jquery.mobile.custom.structure.min.css'; // production
         }
         wp_enqueue_script('bff-mobile-script', $js_mobile, array('jquery'), '1.4.5');
         wp_register_style('bff-mobile-style', $css_mobile, '', '1.4.5');
