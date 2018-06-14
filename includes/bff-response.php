@@ -15,6 +15,7 @@ abstract class BFFResponse extends BFFBase {
     // create a default response object, adding a message if given
     public function set_response($valid = false, $orig = '', $path = '', $code = '',
         $redirect = '', $message = '', $detail = '', $type = 'neutral') {
+        $this->response['bff_slug'] = BFF_SLUG;
         $this->response['valid_url'] = $valid;
         $this->response['orig_url'] = $orig;
         $this->response['path'] = $path;

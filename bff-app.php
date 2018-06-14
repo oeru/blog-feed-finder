@@ -15,13 +15,6 @@ class BFFForm extends BFFCourse {
     // this starts everything...
     public function init() {
         $this->log('in init');
-        /*//$this->register_scripts();
-        wp_register_script('bff-script', plugins_url('js/script.js', __FILE__));
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('bff-script');
-        //$this->register_styles();
-        wp_register_style('bff-style', plugins_url('css/style.css', __FILE__));
-        wp_enqueue_style('bff-style');*/
         // register actions
         add_shortcode(BFF_SHORTCODE, array($this, 'shortcode'));
         // allows us to add a class to our post
@@ -47,17 +40,6 @@ class BFFForm extends BFFCourse {
         add_action('wp_ajax_nopriv_bff_submit', array($this, 'ajax_submit'));
         // this enables the setblogfeed service for authenticated users...
         add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
-        // add jquery mobile js and css loading
-        if (BFF_DEBUG) {
-            $js_mobile = BFF_URL.'js/jquery.mobile.custom.js'; // debugging
-            $css_mobile = BFF_URL.'css/jquery.mobile.custom.structure.css'; // debugging
-        } else {
-            $js_mobile = BFF_URL.'js/jquery.mobile.custom.min.js'; // production
-            $css_mobile = BFF_URL.'css/jquery.mobile.custom.structure.min.css'; // production
-        }
-        wp_enqueue_script('bff-mobile-script', $js_mobile, array('jquery'), '1.4.5');
-        wp_register_style('bff-mobile-style', $css_mobile, '', '1.4.5');
-        wp_enqueue_style('bff-mobile-style', $css_mobile, '', '1.4.5');
         $this->log('finished setting up scripts');
 
     }
@@ -75,8 +57,6 @@ class BFFForm extends BFFCourse {
        // generate the response
        header( "Content-Type: application/json" );
        $this->ajax_response(array('success' => $this->process()));
-       // IMPORTANT: don't forget to "exit"
-       //exit;
        $this->log('ajax_submit done, dying...');
        wp_die();
     }
@@ -94,8 +74,6 @@ class BFFForm extends BFFCourse {
         // generate the response
         header( "Content-Type: application/json" );
         $this->ajax_response(array('success' => $this->process()));
-        // IMPORTANT: don't forget to "exit"
-        //exit;
         $this->log('ajax_set done, dying...');
         wp_die();
     }
@@ -115,12 +93,8 @@ class BFFForm extends BFFCourse {
             } else {
                 $this->response['authenticated'] = true;
             }
-            //$this->log('processing submit: returned response object: '. print_r($this->response, true));
-            // sending the response object to be converted to JSON and returned to
             // the calling page
             $this->ajax_response($this->ajaxfeeds());
-            //$this->log('back from ajaxfeeds...');
-            //return true;
         } elseif (isset($_POST['action']) && $_POST['action'] == 'bff_set') {
             $user = $this->get_current_user();
             $uid = $user->ID;
@@ -130,8 +104,6 @@ class BFFForm extends BFFCourse {
             $url = $feed['url'];
             $type = $feed['type'];
             $this->log('feed info: '.print_r($feed, true));
-        //    $id = $course['id'];
-        //    $tag = $course['tag'];
             $id = $_POST['course_id'];
             $tag = $_POST['course_tag'];
             $this->log('setting the feed URL for '.$uid.' in course '.$id.' ('.$tag.
@@ -145,15 +117,12 @@ class BFFForm extends BFFCourse {
         } else {
             $this->log('no POST action found...');
         }
-        //self::form();
-        //return false;
     }
 
     // define what happens when the shortcode - BFF_SHORTCODE - is fired...
     public function shortcode($atts,$content="") {
         $this->log('in shortcode');
         ob_start();
-        //$this->process();
         $this->form();
         return ob_get_clean();
     }
@@ -166,18 +135,12 @@ class BFFForm extends BFFCourse {
 
         // alert the user that they're not logged in
         if (!is_user_logged_in()) {
-        //if (is_user_logged_in()) {
             $this->log('the current user ++isn\'t++ logged in!');
             $this->alert_anon_user();
         } else {
             $this->log('the current user *is* logged in!');
             $this->inform_auth_user();
-            //$this->alert_anon_user();
-            // compile a list of courses the user's registered for
-            //$this->list_courses();
         }
-        // compile a list of valid feeds (ideally, just one)
-        //$feed_list = $this->list_feeds();
 
         // outputs the options form on admin
         ?>
@@ -262,7 +225,6 @@ class BFFForm extends BFFCourse {
             ."<p>If you have questions, please post in the <a href=".BFF_SUPPORT_FORUM.">blog feed finder topic</a> in our support forum!</p>"
             ."[".BFF_SHORTCODE."]"
             ."<div class='credits'>"
-            //."<p class='credit'>Credits: Emoji icons from the <a href='https://commons.wikimedia.org/wiki/Category:Noto_Color_Emoji_Oreo'>Noto Color Emoji Oreo</a> set (under Apache 2.0 license), and the <a href=\"https://commons.wikimedia.org/wiki/File:Question_Mark_Icon_-_Blue_Box.svg\">question mark icon</a> is by <a href=\"https://commons.wikimedia.org/wiki/User:Willscrlt\">Will Murray</a> (CC-By-SA).</p>"
             ."<p class='credit'>Credits: Emoji icons from the <a href='https://commons.wikimedia.org/wiki/Category:Noto_Color_Emoji_Oreo'>Noto Color Emoji Oreo</a> set (under Apache 2.0 license).</p>"
             ."</div>";
         return $post;

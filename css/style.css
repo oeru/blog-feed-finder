@@ -132,15 +132,23 @@ article.bff-form .container .credit {
     border-radius: 5px;
 }
 
+
 .bff-popup {
+    display: block;
+    position: absolute;
+    padding: 6px;
     width: 400px;
     border: solid 1px #F7BD27;
     background-color: #fff;
     box-shadow: 4px 4px 10px #ccc;
+    -moz-box-shadow: 4px 4px 10px #ccc;
+    -webkit-box-shadow: 4px 4px 10px #ccc;
     border-radius: 5px;
+    z-index: 10000;
 }
 
 .bff-popup p {
+    color: #000;
     word-wrap: normal;
     word-break: normal;
     -webkit-hyphens: auto;

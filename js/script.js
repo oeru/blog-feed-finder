@@ -135,6 +135,75 @@ jQuery(document).ready(function() {
     var feeds, feed_types, courses, authenticated;
     console.log('blog-feed-finder', bff_data);
 
+    $('#bff-feedback').removeClass('success failure');
+    $('#bff-feedback').text('Ready...');
+
+    // handle (re)load of the page
+    $(window).on('load', function() {
+        console.log('in load');
+        $('#bff-submit').attr('disabled', false);
+        $('#bff-feedback').html('Ready...');
+        $('#bff-course-list').attr('hidden', true);
+    });
+
+    /*
+     * initialise jquery tooltips with custom functionality
+     * credit for this: https://gist.github.com/csasbach/867744
+     */
+     function enable_tooltips() {
+         var tooltip = '.bff-tooltip';  // trigger for popup content
+         var popup = 'bff-popup';  // the actual popup class
+         // popup display offsets
+         var voffset = 6;
+         var hoffset = 6;
+         // popup pause and fade times in milliseconds
+         var ptime = 2000;
+         var ftime = 1000;
+
+         console.log('enable tooltips');
+         $(tooltip).each(function() {
+            // grab the content from the title attribute and remove the
+            // title attrib to avoid normal popup-on-hover behaviour
+            $(this).data('title', $(this).attr('title'));
+            console.log('sorted tooltip with text '+$(this).data('title'));
+            $(this).removeAttr('title');
+            // show popup on mouseover/hover
+            $(tooltip).mouseover(function() {
+                console.log('mouseover');
+                // remove any currently displaying popups
+                $(this).next('.'+popup).remove();
+                // create the popup
+                text = $(this).data('title');
+                console.log('new text: '+text);
+                $(this).after('<div class="'+popup+'"><p>'+text+'</p></div>');
+                // manage positioning of the popups (voffset pixels above and hoffset left of tooltip trigger)
+                var left = $(this).position().left + $(this).width()+hoffset;
+    		    var top = $(this).position().top-voffset;
+        		$(this).next().css('left',left);
+                $(this).next().css('top',top);
+            });
+            // manage clicks, e.g. from touch devices
+            $(tooltip).click(function() {
+                console.log('click');
+                $(this).mouseover();
+                // after a ptime pause, then fade out over ftime second
+                $(this).next().animate({opacity: 0.9}, {duration: ptime, complete: function() {
+                    $(this).fadeOut(ftime);
+                }});
+            });
+            // remove popup on mouseout
+            $(tooltip).mouseout(function() {
+                console.log('mouseout');
+    			$(this).next('.'+popup).remove();
+            });
+        });
+    }
+
+    /*
+     * end tooltip stuff
+     */
+
+    // jquery functions
     function compile_message(msgs, types) {
         msg='<div id="bff-responses" class="bff-responses">';
         num = 0;
@@ -144,18 +213,11 @@ jQuery(document).ready(function() {
                 types[entry.type] + ' ' + entry.message;
             if (entry.detail != '') {
                 console.log('entry detail = '+entry.detail);
-                //escaped = entry.detail.replace(/'/g, '&#39;');
-                //console.log('escaped = '+escaped);
+                // escape single quotes
+                escaped = entry.detail.replace(/'/g, '&#39;');
+                console.log('escaped = '+escaped);
                 id = 'popupInfo-'+num;
-                // clean out any previous value...
-                //msg += '<a href="#'+id+'" class="bff-detail bff-info-tooltip ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
-                //msg += '<a href="#'+id+'" class="bff-tooltip ui-btn" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
-                msg += '<a href="#'+id+'" data-rel="popup" data-transition="pop" class="bff-tooltip" title="Learn more"></a>';
-                msg += '</p>';
-                msg += '<div data-role="popup" id="'+id+'" class="ui-content bff-popup">';
-                msg += '    <a href="#" data-rel="back" class="bff-close ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>';
-                msg += '    <p>'+entry.detail+'</p>';
-                msg += '</div>';
+                msg += '<a href="#'+id+'" class="bff-tooltip"  title=\''+escaped+'\'></a>';
             } else {
                 msg += '</p>';
             }
@@ -194,17 +256,6 @@ jQuery(document).ready(function() {
         console.log('turning off button: "'+selector+'"');
         $(selector).hide();
     }
-
-    $('#bff-feedback').removeClass('success failure');
-    $('#bff-feedback').text('Ready...');
-
-    // handle (re)load of the page
-    $(window).on('load', function() {
-        console.log('in load');
-        $('#bff-submit').attr('disabled', false);
-        $('#bff-feedback').html('Ready...');
-        $('#bff-course-list').attr('hidden', true);
-    });
 
     // set this up to submit on 'enter'
     $('input').keypress( function (e) {
@@ -247,14 +298,11 @@ jQuery(document).ready(function() {
                     $('#bff-submit').attr('disabled', false);
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
-                    // required to clean out any previously set popup info...
-                    $('#bff-responses').trigger('refresh');
-                    $('.bff-popup').trigger('remove');
                     // create the new messages (and any relevant popups)
                     $('#bff-feedback').html(compile_message(msgs, types));
-                    // required to get jQuery mobile to reassess this new content
-                    $('#bff-responses').trigger('create');
-                    // update the URL in the input field if required.
+                    // initialise tooltips
+                    enable_tooltips();
+                    // replace the text in the input field if it's been modified.
                     replace_url(data);
                     if (data.hasOwnProperty('feeds')) {
                         // assign these to global variables to make them
