@@ -147,6 +147,7 @@ jQuery(document).ready(function() {
                 //escaped = entry.detail.replace(/'/g, '&#39;');
                 //console.log('escaped = '+escaped);
                 id = 'popupInfo-'+num;
+                // clean out any previous value...
                 //msg += '<a href="#'+id+'" class="bff-detail bff-info-tooltip ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
                 //msg += '<a href="#'+id+'" class="bff-tooltip ui-btn" data-rel="popup" data-transition="pop" title="Learn more">&#x1F6C8;</a>';
                 msg += '<a href="#'+id+'" data-rel="popup" data-transition="pop" class="bff-tooltip" title="Learn more"></a>';
@@ -246,12 +247,14 @@ jQuery(document).ready(function() {
                     $('#bff-submit').attr('disabled', false);
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
+                    // required to clean out any previously set popup info...
+                    $('#bff-responses').trigger('refresh');
+                    $('.bff-popup').trigger('remove');
+                    // create the new messages (and any relevant popups)
                     $('#bff-feedback').html(compile_message(msgs, types));
-                    //$('#bff-responses .bff-tooltip').trigger('refresh');
-                    //$('#bff-responses .bff-tooltip').trigger('refresh');
-                    //$('#bff-responses .bff-popup').hide();
+                    // required to get jQuery mobile to reassess this new content
                     $('#bff-responses').trigger('create');
-                    //$('#bff-responses .bff-popup').show();
+                    // update the URL in the input field if required.
                     replace_url(data);
                     if (data.hasOwnProperty('feeds')) {
                         // assign these to global variables to make them
