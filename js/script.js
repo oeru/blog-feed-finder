@@ -103,7 +103,7 @@ function compile_courses(courses, newfeed) {
     });
     msg += '</ul>';
     if (settable) {
-        msg =  '<p class="instruction">You can assign this blog feed to any of your course blog feeds, or use it to update (replace) any existing assignments:</p>' + msg;
+        msg =  '<p class="instruction">You can assign this blog feed to any of your OERu courses, or use it to update (replace) any existing assignments:</p>' + msg;
     } else {
         msg =  '<p>All of your blog feeds are already set to this feed! There\'s nothing you need to do. Well done!</p>' + msg;
     }
