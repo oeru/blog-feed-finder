@@ -158,6 +158,19 @@ article.bff-form .container .credit {
     /*background-image: url(img/help.16x16.png);*/
     background-image: url(img/info.16x16.png);
     background-repeat: no-repeat;
+    opacity: 0.5;
+}
+
+a.bff-close.ui-btn-left {
+    left: 0;
+    top: 0;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    background-image: url(img/close.16x16.png);
+    background-repeat: no-repeat;
+    opacity: 0.5;
 }
 
 /* Mobile changes */

@@ -30,17 +30,6 @@ class BFFForm extends BFFCourse {
         // and create the post to hold short code...
         $this->create_post(BFF_SLUG);
         $this->log('setting up scripts');
-        // add jquery mobile js and css loading
-        if (BFF_DEBUG) {
-            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // debugging
-            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.css'; // debugging
-        } else {
-            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // production
-            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css'; // production
-        }
-        wp_enqueue_script('bff-mobile-script', $js_mobile, array('jquery'), '1.4.5');
-        wp_register_style('bff-mobile-style', $css_mobile, '', '1.4.5');
-        wp_enqueue_style('bff-mobile-style', $css_mobile, '', '1.4.5');
         // add the ajax handlers
         wp_enqueue_script('bff-script', BFF_URL.'js/script.js', array(
             'jquery', 'jquery-form'));
@@ -58,7 +47,19 @@ class BFFForm extends BFFCourse {
         add_action('wp_ajax_nopriv_bff_submit', array($this, 'ajax_submit'));
         // this enables the setblogfeed service for authenticated users...
         add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
+        // add jquery mobile js and css loading
+        if (BFF_DEBUG) {
+            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // debugging
+            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.css'; // debugging
+        } else {
+            $js_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js'; // production
+            $css_mobile = 'https://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css'; // production
+        }
+        wp_enqueue_script('bff-mobile-script', $js_mobile, array('jquery'), '1.4.5');
+        wp_register_style('bff-mobile-style', $css_mobile, '', '1.4.5');
+        wp_enqueue_style('bff-mobile-style', $css_mobile, '', '1.4.5');
         $this->log('finished setting up scripts');
+
     }
 
     // the function called after the bff-submit button is clicked in our form

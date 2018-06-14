@@ -152,6 +152,7 @@ jQuery(document).ready(function() {
                 msg += '<a href="#'+id+'" data-rel="popup" data-transition="pop" class="bff-tooltip" title="Learn more"></a>';
                 msg += '</p>';
                 msg += '<div data-role="popup" id="'+id+'" class="ui-content bff-popup">';
+                msg += '    <a href="#" data-rel="back" class="bff-close ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>';
                 msg += '    <p>'+entry.detail+'</p>';
                 msg += '</div>';
             } else {
@@ -248,7 +249,9 @@ jQuery(document).ready(function() {
                     $('#bff-feedback').html(compile_message(msgs, types));
                     //$('#bff-responses .bff-tooltip').trigger('refresh');
                     //$('#bff-responses .bff-tooltip').trigger('refresh');
+                    //$('#bff-responses .bff-popup').hide();
                     $('#bff-responses').trigger('create');
+                    //$('#bff-responses .bff-popup').show();
                     replace_url(data);
                     if (data.hasOwnProperty('feeds')) {
                         // assign these to global variables to make them
