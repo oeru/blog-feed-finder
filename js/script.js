@@ -158,7 +158,7 @@ jQuery(document).ready(function() {
          var voffset = 6;
          var hoffset = 6;
          // popup pause and fade times in milliseconds
-         var ptime = 2000;
+         var ptime = 3000;
          var ftime = 1000;
 
          console.log('enable tooltips');

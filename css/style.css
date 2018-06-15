@@ -22,7 +22,6 @@ article.bff-form .container .credit {
 #blog-feed-finder a { color: #076A1F; font-weight: bold; }
 #blog-feed-finder a.hover { color: #000; }
 #blog-feed-finder a.visited { color: #237E39; }
-#bff-url { width: 32em; }
 .bff-form .button {
     padding: 6px 8px;
     color: #333 !important;
@@ -132,7 +131,6 @@ article.bff-form .container .credit {
     border-radius: 5px;
 }
 
-
 .bff-popup {
     display: block;
     position: absolute;
@@ -182,15 +180,27 @@ a.bff-close.ui-btn-left {
 }
 
 /* Mobile changes */
+#bff-url { width: 40em; }
+@media only screen and (max-width: 1000px) {
+    #bff-url { width: 30em; }
+}
 @media only screen and (max-width: 700px) {
-    #bff-url { width: 20em; }
+    #bff-url { width: 25em; }
     .bff-popup { width: 250px; }
 }
 @media only screen and (max-width: 600px) {
-    #bff-url { width: 16em; }
+    #bff-url { width: 20em; }
+    .bff-popup { width: 250px; }
+}
+@media only screen and (max-width: 500px) {
+    #bff-url { width: 15em; }
     .bff-popup { width: 250px; }
 }
 @media only screen and (max-width: 450px) {
     #bff-url { width: 12em; }
+    .bff-popup { width: 250px; }
+}
+@media only screen and (max-width: 400px) {
+    #bff-url { width: 10em; }
     .bff-popup { width: 250px; }
 }
