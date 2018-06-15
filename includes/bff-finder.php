@@ -68,10 +68,12 @@ abstract class BFFFinder extends BFFFeed {
                 if ($this->find_feed_in_page($url)) {
                     $this->log('found a feed reference in the page content!');
                     // look for a feed referenced in the page
+                    $this->response['valid_url'] = $url;
                     $succeeded = true;
                 } else if ($this->find_feed_in_usual_places($url)) {
                     // look for feeds in the normal places
                     $this->log('looking for a feed in the usual places');
+                    $this->response['valid_url'] = $url;
                     $succeeded = true;
                 } else {
                     $this->log('failed to find a feed at: '. $url);

@@ -150,9 +150,10 @@ jQuery(document).ready(function() {
      * initialise jquery tooltips with custom functionality
      * credit for this: https://gist.github.com/csasbach/867744
      */
+     var tooltip = '.bff-tooltip';  // trigger for popup content
+     var popup = 'bff-popup';  // the actual popup class
+
      function enable_tooltips() {
-         var tooltip = '.bff-tooltip';  // trigger for popup content
-         var popup = 'bff-popup';  // the actual popup class
          // popup display offsets
          var voffset = 6;
          var hoffset = 6;
@@ -181,6 +182,7 @@ jQuery(document).ready(function() {
     		    var top = $(this).position().top-voffset;
         		$(this).next().css('left',left);
                 $(this).next().css('top',top);
+                enable_popup();
             });
             // manage clicks, e.g. from touch devices
             $(tooltip).click(function() {
@@ -196,9 +198,19 @@ jQuery(document).ready(function() {
                 console.log('mouseout');
     			$(this).next('.'+popup).remove();
             });
+
         });
     }
-
+    function enable_popup() {
+        console.log('enabling popup');
+        $('.'+popup).each(function() {
+            // if the user explicitly clicks on a popup
+            $('.'+popup).click(function() {
+                console.log('click on popup');
+                $(this).remove();
+            });
+        });
+    }
     /*
      * end tooltip stuff
      */
