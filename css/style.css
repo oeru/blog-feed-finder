@@ -182,7 +182,15 @@ a.bff-close.ui-btn-left {
 }
 
 /* Mobile changes */
-@media (max-width: 480px) {
+@media only screen and (max-width: 700px) {
     #bff-url { width: 20em; }
+    .bff-popup { width: 250px; }
+}
+@media only screen and (max-width: 600px) {
+    #bff-url { width: 17em; }
+    .bff-popup { width: 250px; }
+}
+@media only screen and (max-width: 450px) {
+    #bff-url { width: 13em; }
     .bff-popup { width: 250px; }
 }
