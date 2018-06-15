@@ -1,5 +1,9 @@
 /* created by Dave Lane, dave@oerfoundation.org, https://oeru.org */
+var DEBUG = false; // set to false to disable debugging
+var LOG = DEBUG ? console.log.bind(console) : function () {};
+LOG('BFF DEBUG = true'); // only prints if DEBUG = true
 
+/* jquery-independent functions */
 function addslashes(string) {
     return string.replace(/\\/g, '\\\\').
         replace(/\u0008/g, '\\b').
@@ -13,10 +17,10 @@ function addslashes(string) {
 
 function get_url(data) {
     if (data.hasOwnProperty('redirect') && data.redirect != "") {
-        console.log('Redirect... ', data.redirect);
+        LOG('Redirect... ', data.redirect);
         url = data.redirect;
     } else {
-        console.log('Original... ', data.orig_url)
+        LOG('Original... ', data.orig_url)
         url = data.orig_url;
     }
     return url;
@@ -42,10 +46,10 @@ function compile_feeds(feeds, types, classes, authenticated) {
         //msg += ' (' + content_type + ' format)';
         msg += '<span class="bff-feed '+content_class+'" title="'+content_type+' Format"></span>';
         if (authenticated) {
-            console.log('user is authenticated');
+            LOG('user is authenticated');
             msg += ' <span id="bff-select-' + num + '" class="bff-select button">Select Feed</span>';
         } else {
-            console.log('user is NOT authenticated');
+            LOG('user is NOT authenticated');
         }
         msg += '</li>';
     });
@@ -115,7 +119,7 @@ function compile_courses(courses, newfeed) {
 function get_course_tag(str) {
     terms = str.split('-');
     tag = terms.slice(2,terms.length-1).join('-');
-    console.log('returning tag '+tag);
+    LOG('returning tag '+tag);
     return tag;
 }
 
@@ -123,9 +127,9 @@ function get_course_tag(str) {
 // the course is after the last '-'
 function get_course_id(str) {
     terms = str.split('-');
-    //console.log('terms ('+terms.length+') = '+JSON.stringify(terms));
+    //LOG('terms ('+terms.length+') = '+JSON.stringify(terms));
     id = terms[terms.length-1];
-    console.log('returning id '+id);
+    LOG('returning id '+id);
     return id;
 }
 
@@ -133,14 +137,14 @@ function get_course_id(str) {
 jQuery(document).ready(function() {
     var $ = jQuery;
     var feeds, feed_types, courses, authenticated;
-    console.log('blog-feed-finder', bff_data);
+    LOG('blog-feed-finder', bff_data);
 
     $('#bff-feedback').removeClass('success failure');
     $('#bff-feedback').text('Ready...');
 
     // handle (re)load of the page
     $(window).on('load', function() {
-        console.log('in load');
+        LOG('in load');
         $('#bff-submit').attr('disabled', false);
         $('#bff-feedback').html('Ready...');
         $('#bff-course-list').attr('hidden', true);
@@ -161,21 +165,21 @@ jQuery(document).ready(function() {
          var ptime = 3000;
          var ftime = 1000;
 
-         console.log('enable tooltips');
+         LOG('enable tooltips');
          $(tooltip).each(function() {
             // grab the content from the title attribute and remove the
             // title attrib to avoid normal popup-on-hover behaviour
             $(this).data('title', $(this).attr('title'));
-            console.log('sorted tooltip with text '+$(this).data('title'));
+            LOG('sorted tooltip with text '+$(this).data('title'));
             $(this).removeAttr('title');
             // show popup on mouseover/hover
             $(tooltip).mouseover(function() {
-                console.log('mouseover');
+                LOG('mouseover');
                 // remove any currently displaying popups
                 $(this).next('.'+popup).remove();
                 // create the popup
                 text = $(this).data('title');
-                console.log('new text: '+text);
+                LOG('new text: '+text);
                 $(this).after('<div class="'+popup+'"><p>'+text+'</p></div>');
                 // manage positioning of the popups (voffset pixels above and hoffset left of tooltip trigger)
                 var left = $(this).position().left + $(this).width()+hoffset;
@@ -186,7 +190,7 @@ jQuery(document).ready(function() {
             });
             // manage clicks, e.g. from touch devices
             $(tooltip).click(function() {
-                console.log('click');
+                LOG('click');
                 $(this).mouseover();
                 // after a ptime pause, then fade out over ftime second
                 $(this).next().animate({opacity: 0.9}, {duration: ptime, complete: function() {
@@ -195,18 +199,18 @@ jQuery(document).ready(function() {
             });
             // remove popup on mouseout
             $(tooltip).mouseout(function() {
-                console.log('mouseout');
+                LOG('mouseout');
     			$(this).next('.'+popup).remove();
             });
 
         });
     }
     function enable_popup() {
-        console.log('enabling popup');
+        LOG('enabling popup');
         $('.'+popup).each(function() {
             // if the user explicitly clicks on a popup
             $('.'+popup).click(function() {
-                console.log('click on popup');
+                LOG('click on popup');
                 $(this).remove();
             });
         });
@@ -220,14 +224,14 @@ jQuery(document).ready(function() {
         msg='<div id="bff-responses" class="bff-responses">';
         num = 0;
         msgs.forEach(function(entry) {
-            console.log('entry = '+JSON.stringify(entry));
+            LOG('entry = '+JSON.stringify(entry));
             msg += '<p class="bff-response ' + entry.type + '">' +
                 types[entry.type] + ' ' + entry.message;
             if (entry.detail != '') {
-                console.log('entry detail = '+entry.detail);
+                LOG('entry detail = '+entry.detail);
                 // escape single quotes
                 escaped = entry.detail.replace(/'/g, '&#39;');
-                console.log('escaped = '+escaped);
+                LOG('escaped = '+escaped);
                 id = 'popupInfo-'+num;
                 msg += '<a href="#'+id+'" class="bff-tooltip"  title=\''+escaped+'\'></a>';
             } else {
@@ -247,32 +251,32 @@ jQuery(document).ready(function() {
 
     // turn on the course list and let user assign a feed to Courses
     function enable_courses(authenticated) {
-        console.log('enabling courses...');
+        LOG('enabling courses...');
         $('#bff-feed-list').html(selected_feed(feeds,feed_types,feed_classes));
         $('#bff-course-list').attr('hidden', false);
         if (authenticated) {
-            console.log('user logged in.');
+            LOG('user logged in.');
             $('#bff-course-list').html(compile_courses(courses, feeds[feeds.selected].url));
         } else {
             $('#bff-course-list').hide();
-            console.log('user NOT logged in.');
+            LOG('user NOT logged in.');
         }
     }
 
     // show that a course has been updated
     function update_course_feed(tag, id, url) {
-        console.log('course '+tag+' updated to '+url);
+        LOG('course '+tag+' updated to '+url);
         $('#bff-original-'+tag).html('updated blog feed to <a href="'+url+'">'+url+'</a>&nbsp;&nbsp;<span class="bff-success">Success</span>');
         $('#bff-original-'+tag).addClass('updated');
         selector = '#bff-set-'+tag+'-'+id;
-        console.log('turning off button: "'+selector+'"');
+        LOG('turning off button: "'+selector+'"');
         $(selector).hide();
     }
 
     // set this up to submit on 'enter'
     $('input').keypress( function (e) {
         c = e.which ? e.which : e.keyCode;
-        console.log('input: ' + c);
+        LOG('input: ' + c);
         if (c == 13) {
             $('#bff-submit').click();
             return false;
@@ -288,7 +292,7 @@ jQuery(document).ready(function() {
         $('#bff-feeds').attr('hidden', true);
         $('#bff-feedback').removeClass('success failure');
         $('#bff-feedback').html('Processing...');
-        //console.log('url: ', bff_data.ajaxurl);
+        //LOG('url: ', bff_data.ajaxurl);
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -301,12 +305,12 @@ jQuery(document).ready(function() {
             success: function(data) {
                 var msgs = '';
                 var types = data.types
-                console.log('Success: data: ', data);
+                LOG('Success: data: ', data);
                 if (data.hasOwnProperty('success')) {
                     // strip links out
                     //msg = data.message.replace(/<a[^>]*>[^<]*<\/a>/g, '');
                     msgs = data.messages;
-                    console.log('Success msgs', msgs);
+                    LOG('Success msgs', msgs);
                     $('#bff-submit').attr('disabled', false);
                     $('#bff-feedback').addClass('success');
                     $('#bff-feedback').removeClass('failure');
@@ -329,9 +333,9 @@ jQuery(document).ready(function() {
                         $('#bff-feeds').attr('hidden', false);
                         // if we've only got one feed, or if one's been selected...
                         if (feeds.length == 1) {
-                            console.log('only one feed!');
+                            LOG('only one feed!');
                             feeds.selected = 0;
-                            console.log('feeds array: '+feeds);
+                            LOG('feeds array: '+feeds);
                         }
                         if (feeds.hasOwnProperty('selected')) {
                             enable_courses(authenticated);
@@ -341,35 +345,35 @@ jQuery(document).ready(function() {
                             $('#bff-feed-list').html(compile_feeds(feeds, feed_types, feed_classes, authenticated));
                             // add this in case it was removed by a previous run.
                             $('#bff-feed-list').addClass('bff-alert-box');
-                            console.log('need to select a feed: ', feeds);
+                            LOG('need to select a feed: ', feeds);
                         }
                     }
                 }
-                console.log('returning true');
+                LOG('returning true');
                 return true;
             },
             failure: function(data) {
-                console.log('Failure: data: ', data);
+                LOG('Failure: data: ', data);
                 $('#bff-feedback').removeClass('failure success');
                 $('#bff-feedback').text(msg);
             }
         });
         // if nothing else returns this first, there was a problem...
-        console.log('completed submit... returning false');
+        LOG('completed submit... returning false');
         return false;
     });
 
     // handle selection of a feed
     $('#bff-feed-list').on('click','.bff-select', function() {
         button_id = $(this).attr('id');
-        console.log('the value of this selected button id is '+button_id);
+        LOG('the value of this selected button id is '+button_id);
         // pick out the number
         feeds.selected = button_id.split("-")[2];
-        console.log('the selected feed is '+feeds.selected);
+        LOG('the selected feed is '+feeds.selected);
         // hide the whole list
         $('#bff-feed-list ul').attr('hidden', true);
         // set the selected feed
-        console.log('completed select');
+        LOG('completed select');
         // remove the "bff-alert-box" class
         $('#bff-feed-list').removeClass('bff-alert-box');
         enable_courses(authenticated);
@@ -381,10 +385,10 @@ jQuery(document).ready(function() {
         $('#bff-submit').attr('disabled', false);
         // get the button id, which contains the
         button_id = $(this).attr('id');
-        console.log('the value of this button id is '+button_id);
+        LOG('the value of this button id is '+button_id);
         course_tag = get_course_tag(button_id);
         course_id = get_course_id(button_id);
-        console.log('the course: '+course_tag+'('+course_id+')');
+        LOG('the course: '+course_tag+'('+course_id+')');
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -398,20 +402,20 @@ jQuery(document).ready(function() {
             },
             success: function(data) {
                 if (data.hasOwnProperty('success')) {
-                    console.log('button_id = '+ button_id);
+                    LOG('button_id = '+ button_id);
                     tag = get_course_tag(button_id);
                     id = get_course_id(button_id);
-                    console.log('Success - '+tag+'('+id+')');
+                    LOG('Success - '+tag+'('+id+')');
                     update_course_feed(tag, id, feed.url);
                     $('.bff-success').fadeOut(4000);
                 }
                 return true;
             },
             failure: function(data) {
-                console.log('failure: data: ', data);
+                LOG('failure: data: ', data);
             }
         });
-        console.log('completed set');
+        LOG('completed set');
         return false;
     });
 
