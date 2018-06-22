@@ -51,7 +51,7 @@ class BFFCourse extends BFFFinder {
             $course['id'] = $site->userblog_id;
             $course['path'] = $site->path;
             $course['name'] = $site->blogname;
-            $this>log('processing site: '.$site->blogname);
+            $this->log('processing site: '.$site->blogname);
             if ($feed = $this->get_blog_url_for_user_for_site($user, $site)) {
                 $this->log('identified feed: '.print_r($feed, true));
                 $course['feed'] = $feed;
@@ -60,7 +60,7 @@ class BFFCourse extends BFFFinder {
         }
         $this->log('course_list: '. print_r($this->course_list, true));
         $this->response['courses'] = $this->course_list;
-        $this->log('response in list_courses... '.print_r($this->response, true));
+        $this->log('response in list_courses... '.print_r($this->response['courses'], true));
         return $this->response;
     }
 

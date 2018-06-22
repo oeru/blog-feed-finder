@@ -48,7 +48,7 @@ class BFFForm extends BFFCourse {
     public function ajax_submit() {
        $this->log('in ajax_submit: '.print_r($_POST, true));
        // check if the submitted nonce matches the generated nonce created in the auth_init functionality
-       if ( ! wp_verify_nonce( $_POST['nonce_submit'], 'bff-submit-nonce') ) {
+       if ( ! wp_verify_nonce(sanitize_text_field($_POST['nonce_submit']), 'bff-submit-nonce') ) {
            die ("Busted - someone's trying something funny in submit!");
        } else {
            $this->log('bff-submit-nonce all good.');
@@ -64,7 +64,7 @@ class BFFForm extends BFFCourse {
     public function ajax_set() {
         $this->log('in ajax_set: '.print_r($_POST, true));
         // check if the submitted nonce matches the generated nonce created in the auth_init functionality
-        if ( ! wp_verify_nonce( $_POST['nonce_set'], 'bff-set-nonce') ) {
+        if ( ! wp_verify_nonce(sanitize_text_field($_POST['nonce_set']), 'bff-set-nonce') ) {
             $this->log('bff-set-nonce ain\'t right!');
             die ("Busted - someone's trying something funny in set!");
         } else {

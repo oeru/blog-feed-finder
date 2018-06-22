@@ -49,10 +49,12 @@ abstract class BFFFinder extends BFFFeed {
         $this->log('### test_url response: '. print_r($response, true));
         // if we got a valid URL...
         if ($response['valid_url']) {
-                if ($response['code'] == '302' || $response['code'] == '301') {
+            if ($response['code'] == '302' || $response['code'] == '301') {
+                $this->log('setting url to redirect value');
                 //if ($path != '') { $redirect .= $path; }
                 $url = $response['redirect'];
             } else {
+                $this->log('setting url to orig_url value');
                 $url = $response['orig_url'];
             }
             $this->log('new url: '. $url);
@@ -97,12 +99,16 @@ abstract class BFFFinder extends BFFFeed {
         // 1. Check if the page is, itself, a feed, by checking the Content-Type header
         if (array_key_exists($this->response['content_type'], $this->feed_types)) {
             $content_type = $this->feed_types[$this->response['content_type']];
-            $this->log('bingo! We\'ve got a valid feed of type '.$content_type);
-            $this->add_message('Yay! '.$url.' points to a feed of type: "'.$content_type.'"!');
+            $this->log('bingo! We\'ve got a valid feed type '.$content_type);
+            $this->add_message('Yay! we found a valid feed!', 'The address '.$url.' points to a valid "'.$content_type.'" feed!', 'good');
+            $this->add_feed($url, $this->response['content_type']);
             return true;
+        } else {
+            $this->log('the content type is '.$this->response['content_type']);
         }
         //
         // 2. failing that, get the actual HTML...
+        $this->log('getting the contents of '.$url.'...');
         $content = file_get_contents($url, FALSE, NULL, 0, BFF_MAX_FILE_READ_CHAR);
         // 2a. now check if the content is valid XML, and if so, what type...
         if ($type = $this->is_valid_xml($content)) {
@@ -110,16 +116,21 @@ abstract class BFFFinder extends BFFFeed {
             if (array_key_exists($type, $this->feed_types)) {
                 $this->log('the content is of type "'.$this->feed_types[$type].'".');
                 $this->response['content_type'] = $type;
+                $this->add_message('Found a supported feed!', 'Found a feed in '.
+                    $this->feed_types[$type].' format, which we support, yay!', 'good');
                 $this->add_feed($url,$type);
+
                 return true;
             }
             $this->log('the content is XML, but not of a sort we support as a feed type');
+            $this->add_message('Found what <em>might</em> be a feed, but it\'s not one we support.', 'Found valid XML content, but not in a format we currently support...', 'neutral');
         } else {
             $this->log('the content isn\'t valid XML.');
         }
         // 2.b now check if the content is valid JSON...
         if ($type = $this->is_valid_json($content)) {
             $this->log('ok, found that it\'s in JSON format, so it\'s probably a feed.');
+            $this->add_message('Found what is <em>probably</em> a feed!', 'Found JSON content, so this is likely to be a feed.', 'good');
             $this->add_feed($url, $type);
             return true;
         }
@@ -202,7 +213,7 @@ abstract class BFFFinder extends BFFFeed {
         if ($xml->channel->item && $xml->channel->item->count() > 0) {
             $type = 'application/rss+xml';
         } elseif ($xml->entry) {
-            $type = 'application/rss+atom';
+            $type = 'application/atom+xml';
         } else {
             $type = 'xml';
         }

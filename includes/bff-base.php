@@ -20,7 +20,7 @@ abstract class BFFBase {
         }
     }
 
-    function get_caller_info() {
+    public function get_caller_info() {
         $c = '';
         $file = '';
         $func = '';
