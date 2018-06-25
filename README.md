@@ -30,6 +30,10 @@ If the user is authenticated, further capabilities are available:
 
 The BFF makes use of default WordPress jQuery library dependencies and has a fully AJAX-based interface.
 
+## Known issues
+
+To determine whether a feed has been found, in some cases the code will download the content of a URL to test whether it is valid XML (a pre-requisite for valid RSS or Atom), however it's possible that a very large file (or a maliscious one) could flood the server's drive and achieve a major crash or denial of service at the very least. As a result, we limit the size of the file download to something we *believe* is larger thank most feed files (particularly since most are paged or otherwise limited in size to protect the servers hosting them). So, in the (unlikely) case of a feed file that is larger than this limit, no feed will be identified. Any ideas on how to circumvent this problem (e.g. pointers to a PHP library that can identify RSS or Atom feeds based on non-XML-compliant snippets) would be much appreciated!
+
 ## Testing and Feedback
 
-We're keen for as many people as possible to use this code, make suggestion to improve it (or improve it unilaterally :) - it's fully FOSS), or perhaps learn a few tricks from it. You can provide feedback through the Git foundry support mechanisms (e.g. issues) or via our [Tech Blog](https://tech.oeru.org). 
+We're keen for as many people as possible to use this code, make suggestion to improve it (or improve it unilaterally :) - it's fully FOSS), or perhaps learn a few tricks from it. You can provide feedback through the Git foundry support mechanisms (e.g. issues) or via our [Tech Blog](https://tech.oeru.org).
