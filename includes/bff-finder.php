@@ -286,9 +286,8 @@ abstract class BFFFinder extends BFFFeed {
                 if (!isset($parts['host'])) {
                     $this->log('no host specified... bailing');
                     $this->set_response(false, $url);
-                    $this->add_message('Unfortunately, that isn\'t a valid web address. Please try again.',
-                        '"'.$url.'" isn\'t a valid web address - it requires at least a "top level domain", i.e. a ".", followed by a few letters, for example ".com". Best thing to do is to go to you blog and copy-and-paste the web address from your browser\'s address bar. Not sure what we mean by "blog"? Check out our OERU <a href="'
-                        .BFF_BLOG_SUPPORT.'">Learner Support Site</a>.', 'problem');
+                    $this->add_message('Unfortunately, that isn\'t a valid web address. Please try again. Not sure what we mean by "blog"? Check out our OERU <a href="'.BFF_SUPPORT_BLOG.'">Learner Support Site</a>.',
+                        '"'.$url.'" isn\'t a valid web address - it requires at least a "top level domain", i.e. a ".", followed by a few letters, for example ".com". Best thing to do is to go to you blog and copy-and-paste the web address from your browser\'s address bar.', 'problem');
                     return false;
                 }
             } else {
@@ -398,7 +397,7 @@ abstract class BFFFinder extends BFFFeed {
             if (in_array($parts['host'], $this->bad_hosts)) {
                 $this->log('-----------------url '.$url.' has a bad host: '.$parts['host']);
                 $this->response['valid_feed'] = false;
-                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident - to learn more, see our support site\'s "<a href="'.BFF_BLOG_SUPPORT.'">blog</a>" section...', '', 'problem');
+                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident - to learn more, see our support site\'s "<a href="'.BFF_SUPPORT_BLOG.'">blog</a>" section...', '', 'problem');
                 return false;
             }
         } else {

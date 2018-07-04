@@ -50,7 +50,7 @@ define('BFF_ID', 'blog-feed-finder');
 define('BFF_CLASS', 'bff-form');
 // support link for users of this plugin...
 define('BFF_SUPPORT_FORUM', 'https://forums.oeru.org/t/blog-feed-finder');
-define('BFF_BLOG_SUPPORT', 'https://course.oeru.org/support/studying-courses/course-blog/');
+define('BFF_SUPPORT_BLOG', 'https://course.oeru.org/support/studying-courses/course-blog/');
 // admin details
 define('BFF_ADMIN_SLUG', 'BFF_settings');
 define('BFF_ADMIN_TITLE', 'Blog Feed Finder Settings');
