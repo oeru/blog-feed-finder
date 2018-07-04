@@ -101,7 +101,8 @@ abstract class BFFFinder extends BFFFeed {
         if (array_key_exists($this->response['content_type'], $this->feed_types)) {
             $content_type = $this->feed_types[$this->response['content_type']];
             $this->log('***** bingo! We\'ve got a valid feed type '.$content_type);
-            $this->add_message('Yay! we found a valid feed!', 'The address '.$url.' points to a valid "'.$content_type.'" feed!', 'good');
+            $this->add_message('Yay! we found a valid feed!', 'The address '.$url.
+                ' points to a valid "'.$content_type.'" feed!', 'good');
             $this->add_feed($url, $this->response['content_type']);
             return true;
         } else {
@@ -129,8 +130,11 @@ abstract class BFFFinder extends BFFFeed {
                     $feed_parts = parse_url($feed);
                     if ($url_parts['scheme'] == 'https' && $feed_parts['scheme'] == 'http') {
                         $this->log('Uh oh!!! Feed URL uses http, but main URL accepts https!');
-                        $feed = 'https://'.$feed_parts['host'].$feed_parts['path'].
-                            '?'.$feed_parts['query'];
+                        $feed = 'https://'.$feed_parts['host'].$feed_parts['path'];
+                        if (isset($feed_parts['query'])) {
+                            $this->log('query = '.$feed_parts['query']);
+                            $feed .= '?'.$feed_parts['query'];
+                        }
                         $this->log('new feed url = '.$feed);
                     }
                     $type = $link->getAttribute('type');
