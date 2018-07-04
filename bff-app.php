@@ -219,11 +219,11 @@ class BFFForm extends BFFCourse {
         $post['post_slug'] = $slug;
         $post['post_title']  = 'Blog Feed Finder';
         $post['post_content'] = "<p>The Blog Feed Finder helps you work out the exact web address (URL) for your blog's feed.</p>"
-            ."<p>Start by going to your blog - use another browser tab or window. "
+            ."<p>Start by going to <strong>your own</strong> blog - use another browser tab or window. "
             ."Copy the blog's web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
             ."and paste it into the text box below.</p>"
             ."<p>Need help? Consult the OERu <a href=".BFF_SUPPORT_BLOG.">support site</a>, or post your question on our <a href=".BFF_SUPPORT_FORUM.">support forum</a>.</p>"
-            ."[".BFF_SHORTCODE."]"
+            ."[".BFF_SHORTCODE."]"<
             ."<div class='credits'>"
             ."<p class='credit'>Credits: Emoji icons from the <a href='https://commons.wikimedia.org/wiki/Category:Noto_Color_Emoji_Oreo'>Noto Color Emoji Oreo</a> set (under Apache 2.0 license).</p>"
             ."</div>";
