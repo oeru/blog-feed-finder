@@ -20,6 +20,7 @@ abstract class BFFResponse extends BFFBase {
         $this->response['orig_url'] = $orig;
         $this->response['path'] = $path;
         $this->response['code'] = $code;
+        $this->log('setting redirect to '.$redirect.'!!!!!!');
         $this->response['redirect'] = $redirect;
         if ($message != '') {
             $this->add_message($message, $detail, $type);

@@ -39,8 +39,8 @@ class BFFCourse extends BFFFinder {
     public function list_courses() {
         $user = $this->get_current_user();
         $sites = get_blogs_of_user($user->ID);
-        $this->log('listing courses for '. print_r($user->data->user_login, true));
-        $this->log('courses: '. print_r($sites, true));
+        //$this->log('listing courses for '. print_r($user->data->user_login, true));
+        //$this->log('courses: '. print_r($sites, true));
         $course = array();
         foreach($sites as $site) {
             if ($site->userblog_id == 1) {
@@ -58,9 +58,9 @@ class BFFCourse extends BFFFinder {
             }
             $this->course_list[] = $course;
         }
-        $this->log('course_list: '. print_r($this->course_list, true));
+        //$this->log('course_list: '. print_r($this->course_list, true));
         $this->response['courses'] = $this->course_list;
-        $this->log('response in list_courses... '.print_r($this->response['courses'], true));
+        //$this->log('response in list_courses... '.print_r($this->response['courses'], true));
         return $this->response;
     }
 
@@ -74,6 +74,15 @@ class BFFCourse extends BFFFinder {
                 $this->log('successfully set user '.$user_id.' feed type for site '.
                     $site_id.' to '.$type);
             }
+            // fire off the update_user_feed hook!
+            $args = array(
+                'user_id' => $user_id,
+                'site_id' => $site_id,
+                'url' => $url,
+                'type' => $type
+            );
+            do_action('bff_update_user_feed', $args);
+            //
             return true;
         } else {
             $this->log('update failed!');

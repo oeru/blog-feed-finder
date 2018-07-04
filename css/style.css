@@ -60,7 +60,10 @@ article.bff-form .container .credit {
     background: #FCD980;
     border: solid 1px #F7BD27;
 }
-#bff-auth-notice { margin-left: 28px; }
+#bff-auth-notice {
+    margin-left: 28px;
+    display: none;
+}
 #bff-unauth-notice p, #bff-auth-notice p { padding: 6px; }
 #bff-unauth-notice a, #bff-auth-notice a {
     padding: 0;

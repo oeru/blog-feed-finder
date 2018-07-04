@@ -30,7 +30,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define( 'BFF_VERSION', '0.0.2' );
+define( 'BFF_VERSION', '0.9.0' );
 // plugin computer name
 define('BFF_NAME', 'BFF');
 // current version

@@ -65,10 +65,11 @@ abstract class BFFFinder extends BFFFeed {
             // mistaken pattern, e.g. it's just the course's URL
             // if so, continue on to the next URL
             if ($this->valid_blog_url($url)) {
-                $this->log('looking for a feed in the page content, or if that fails, in the "usual places."');
+                $this->log('looking for a feed in the page content of '.$url.', or if that fails, in the "usual places."');
                 // we've got a valid URL, so let's look for a feed...
+                $this->log('**** response content_type = '.$this->response['content_type']);
                 if ($this->find_feed_in_page($url)) {
-                    $this->log('found a feed reference in the page content!');
+                    $this->log('found a feed reference in the page content of '.$url);
                     // look for a feed referenced in the page
                     $this->response['valid_url'] = $url;
                     $succeeded = true;
@@ -95,22 +96,88 @@ abstract class BFFFinder extends BFFFeed {
 
     // check and see if there are any references to feeds in the content of the page
     public function find_feed_in_page($url) {
-        $this->log('checking the content of '.$url.' to look for feed references.');
+        $this->log('checking the returned content type '.$url.' to see if it\'s a feed.');
         // 1. Check if the page is, itself, a feed, by checking the Content-Type header
         if (array_key_exists($this->response['content_type'], $this->feed_types)) {
             $content_type = $this->feed_types[$this->response['content_type']];
-            $this->log('bingo! We\'ve got a valid feed type '.$content_type);
+            $this->log('***** bingo! We\'ve got a valid feed type '.$content_type);
             $this->add_message('Yay! we found a valid feed!', 'The address '.$url.' points to a valid "'.$content_type.'" feed!', 'good');
             $this->add_feed($url, $this->response['content_type']);
             return true;
         } else {
-            $this->log('the content type is '.$this->response['content_type']);
+            $this->log('***** the content type is '.$this->response['content_type']);
         }
         //
         // 2. failing that, get the actual HTML...
-        $this->log('getting the contents of '.$url.'...');
+        $this->log('checking the content of '.$url.' to look for feed references.');
         $content = file_get_contents($url, FALSE, NULL, 0, BFF_MAX_FILE_READ_CHAR);
-        // 2a. now check if the content is valid XML, and if so, what type...
+        // 2.a check if the page has any references to feeds...
+        // create an object that knows how to read an HTML string and convert it into a DOM
+        $dom = new DOMDocument('1.0', 'utf-8');
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $links = $dom->getElementsByTagName('link');
+        $found = 0;
+        if (count($links)) {
+            foreach($links as $link) {
+                if ($link->getAttribute('rel') == 'alternate') {
+                    // if the type is one of the feed types we recognise...
+                    //
+                    $feed = $link->getAttribute('href');
+                    // work out if the feed url scheme is http, but should be https
+                    $url_parts = parse_url($url);
+                    $feed_parts = parse_url($feed);
+                    if ($url_parts['scheme'] == 'https' && $feed_parts['scheme'] == 'http') {
+                        $this->log('Uh oh!!! Feed URL uses http, but main URL accepts https!');
+                        $feed = 'https://'.$feed_parts['host'].$feed_parts['path'].
+                            '?'.$feed_parts['query'];
+                        $this->log('new feed url = '.$feed);
+                    }
+                    $type = $link->getAttribute('type');
+                    $title = false;
+                    if ($link->getAttribute('title') != '') {
+                        $title = $link->getAttribute('title');
+                    }
+                    if (array_key_exists($type, $this->feed_types)) {
+                        $this->log('link: '.$feed.', title: '.$title.' type: '.$type);
+                        $type_name = $this->feed_types[$type];
+                        if ($title) {
+                            // allow feeds that don't have "Comments Feed" in the title...
+                            if (strpos($title, 'Comments Feed') == false) {
+                                $msg = ' Feed "'.$title.'" found.';
+                                $detail= ' "'.$type_name.'" feed "'
+                                    .$title.'" found at '.$feed.'...';
+                                // add this feed...
+                                $this->add_feed($feed, $type, $title);
+                                $type = 'good';
+                            } else {
+                                // don't add this feed
+                                $msg = ' Comment feed "'.$title.
+                                    '" found - <em>probably not what you want</em>.';
+                                $detail = ' "'.$type_name.'" feed "'
+                                    .$title.'" found at '
+                                    .$feed.'. This is probably not what we want, as it\'s specific to comments to your posts...';
+                                $type = 'neutral';
+                            }
+                        } else {
+                            $msg = 'Feed found.';
+                            $detail = 'Untitled "'.$type_name.'" feed found at address '
+                                .$feed.'!';
+                            $this->add_feed($feed, $type);
+                            $type = 'good';
+                        }
+                        $this->add_message($msg, $detail, $type);
+                        $found++;
+                        $this->log('msg: '.$msg);
+                        $this->log('href = '.$feed.', type = '.$type);
+                    }
+                }
+            }
+        }
+        if ($found > 0) {
+            return true;
+        }
+        // 2b. now check if the content is valid XML, and if so, what type...
         if ($type = $this->is_valid_xml($content)) {
             // is it an type we're looking for?
             if (array_key_exists($type, $this->feed_types)) {
@@ -127,67 +194,14 @@ abstract class BFFFinder extends BFFFeed {
         } else {
             $this->log('the content isn\'t valid XML.');
         }
-        // 2.b now check if the content is valid JSON...
+        // 2.c now check if the content is valid JSON...
         if ($type = $this->is_valid_json($content)) {
             $this->log('ok, found that it\'s in JSON format, so it\'s probably a feed.');
             $this->add_message('Found what is <em>probably</em> a feed!', 'Found JSON content, so this is likely to be a feed.', 'good');
             $this->add_feed($url, $type);
             return true;
         }
-        // Failing that, check if the page has any references to feeds...
-        // create an object that knows how to read an HTML string and convert it into a DOM
-        $dom = new DOMDocument('1.0', 'utf-8');
-        libxml_use_internal_errors(true);
-        $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $links = $dom->getElementsByTagName('link');
-        $found = 0;
-        if (count($links)) {
-            foreach($links as $link) {
-                if ($link->getAttribute('rel') == 'alternate') {
-                    // if the type is one of the feed types we recognise...
-                    if (array_key_exists($link->getAttribute('type'), $this->feed_types)) {
-                        $this->log('link title: '.$link->getAttribute('title').' type: '.$link->getAttribute('type'));
-                        $type_name = $this->feed_types[$link->getAttribute('type')];
-                        if ($link->getAttribute('title') != '') {
-                            // allow feeds that don't have "Comments Feed" in the title...
-                            if (strpos($link->getAttribute('title'), 'Comments Feed') == false) {
-                                $msg = ' Feed "'
-                                    .$link->getAttribute('title').'" found.';
-                                $detail= ' "'.$type_name.'" feed "'
-                                    .$link->getAttribute('title').'" found at '
-                                    .$link->getAttribute('href').'...';
-                                // add this feed...
-                                $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'),
-                                    $link->getAttribute('title'));
-                                $type = 'good';
-                            } else {
-                                // don't add this feed
-                                $msg = ' Comment feed "'
-                                    .$link->getAttribute('title').'" found - <em>probably not what you want</em>.';
-                                $detail = ' "'.$type_name.'" feed "'
-                                    .$link->getAttribute('title').'" found at '
-                                    .$link->getAttribute('href').'. This is probably not what we want, as it\'s specific to comments to your posts...';
-                                $type = 'neutral';
-                            }
-                        } else {
-                            $msg = 'Feed found.';
-                            $detail = 'Untitled "'.$type_name.'" feed found at address '
-                                .$link->getAttribute('href').'!';
-                            $this->add_feed($link->getAttribute('href'), $link->getAttribute('type'));
-                            $type = 'good';
-                        }
-                        $this->add_message($msg, $detail, $type);
-                        $found++;
-                    }
-                }
-                //$this->log('link title: '.$link->getAttribute('title'));
-            }
-        } else {
-            $this->log('no feeds found in this document');
-        }
-        if ($found > 0) {
-            return true;
-        }
+        $this->log('no feeds found in this document');
         return false;
     }
 
@@ -223,7 +237,7 @@ abstract class BFFFinder extends BFFFeed {
 
     // check if a string is valid JSON
     private function is_valid_json($content) {
-        $this->log('check if the content found at '.$url.' is valid JSON.');
+        $this->log('check if the content is valid JSON.');
         json_decode($content);
         // if not, check if it's a valid JSON feeds
         if (json_last_error() == JSON_ERROR_NONE) {
@@ -245,15 +259,21 @@ abstract class BFFFinder extends BFFFeed {
             // split up the URL into its component parts and tidy it up
             if ($parts = parse_url(strtolower(trim($url)))) {
                 $this->log('checking blog_url: '. print_r($parts, true));
-                $path = $parts['path'];
+                //$path = $parts['path'];
                 // if no scheme was specified, default to http://
+                // but also realise that the whole host + path are likely to be in
+                // $parts['path']
                 if (!isset($parts['scheme'])) {
                     $this->log('no scheme specified... adding http');
                     $this->add_message('We completed your address by adding http:// to the front.','We\'ve added an http:// \'scheme\' to your address - a valid scheme is a necessary part of a web address', 'neutral');
-                    $parts = parse_url('http://'.$path);
+                    //$parts = parse_url('http://'.$parts['host'].$parts['path']);
+                    $url = 'http://'.$orig;
+                    $parts = parse_url(strtolower(trim($url)));
+                    $this->log('re-checking blog_url: '. print_r($parts, true));
+                } else {
+                    // reconstruct the URL
+                    $url = $parts['scheme'].'://'.$parts['host'].$parts['path'];
                 }
-                // reconstruct the URL
-                $url = $parts['scheme'].'://'.$parts['host'].$parts['path'];
                 if (isset($parts['query'])) {
                     $url .= '?'.$parts['query'];
                 }
@@ -290,6 +310,7 @@ abstract class BFFFinder extends BFFFeed {
                     case 'HTTP/1.0 301 Moved Permanently':
                     case 'HTTP/1.1 301 Moved Permanently':
                         if ($redirect = $this->get_redirect($headers)) {
+                            $this->response['redirect'] = $redirect;
                             $this->set_response(true, $orig, $path, '301', $redirect, 'The web address you supplied redirects to another one - nothing wrong with that.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "permanent redirect" (301)', 'good');
                         } else {
@@ -301,6 +322,7 @@ abstract class BFFFinder extends BFFFeed {
                     case 'HTTP/1.0 302 Moved Temporarily':
                     case 'HTTP/1.1 302 Moved Temporarily':
                         if ($redirect = $this->get_redirect($headers)) {
+                            $this->response['redirect'] = $redirect;
                             $this->set_response(true, $orig, $path, '302', $redirect, 'Your web address redirects to another one, no problems.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'good');
                         } else {
@@ -312,7 +334,8 @@ abstract class BFFFinder extends BFFFeed {
                     case 'HTTP/1.0 302 Found':
                     case 'HTTP/1.1 302 Found':
                         if ($redirect = $this->get_redirect($headers)) {
-                            $this->set_response(false, $orig, $path, '302', $redirect,
+                            $this->response['redirect'] = $redirect;
+                            $this->set_response(true, $orig, $path, '302', $redirect,
                                 'Your web address redirects to another one, no problems.',
                                 '"'.$url.'" found. It redirects to '.$redirect.' via a "temporary redirect" (302)', 'neutral');
                         } else {
@@ -347,8 +370,8 @@ abstract class BFFFinder extends BFFFeed {
             } else {
                 $this->log('no headers returned');
                 $this->set_response(false, $url, '', 'unknown', '',
-                    'Your web address isn\'t responding. The site might be down, or perhaps there\'s a network problem between its server and our server.',
-                    'The web address entered, "'.$url.'", isn\'t responding. Either the site is down, incredibly slow, or it doesn\'t exist - perhaps a spelling error?',
+                    'Your web address isn\'t responding. Perhaps there\'s a typo? Otherwise, perhaps the site is down or there\'s a network problem between its server and our server.',
+                    'The web address entered, "'.$url.'", isn\'t responding. Either the address is misspelled, the site is down, incredibly slow, or it doesn\'t exist...',
                     'problem');
             }
         } else {
@@ -371,7 +394,7 @@ abstract class BFFFinder extends BFFFeed {
             if (in_array($parts['host'], $this->bad_hosts)) {
                 $this->log('-----------------url '.$url.' has a bad host: '.$parts['host']);
                 $this->response['valid_feed'] = false;
-                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident.', 'To learn more, have a look at our support site\'s "<a href="'.BFF_BLOG_SUPPORT.'">blog</a>" section...', 'problem');
+                $this->add_message('Oops, this isn\'t a valid blog, but it\'s one people commonly enter by accident - to learn more, see our support site\'s "<a href="'.BFF_BLOG_SUPPORT.'">blog</a>" section...', '', 'problem');
                 return false;
             }
         } else {
