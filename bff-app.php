@@ -223,7 +223,7 @@ class BFFForm extends BFFCourse {
             ."Copy the blog's web address - the text in your browser's 'address bar' which starts with '<strong>http://</strong>' or '<strong>https://</strong>' - "
             ."and paste it into the text box below.</p>"
             ."<p>Need help? Consult the OERu <a href=".BFF_SUPPORT_BLOG.">support site</a>, or post your question on our <a href=".BFF_SUPPORT_FORUM.">support forum</a>.</p>"
-            ."[".BFF_SHORTCODE."]"<
+            ."[".BFF_SHORTCODE."]"
             ."<div class='credits'>"
             ."<p class='credit'>Credits: Emoji icons from the <a href='https://commons.wikimedia.org/wiki/Category:Noto_Color_Emoji_Oreo'>Noto Color Emoji Oreo</a> set (under Apache 2.0 license).</p>"
             ."</div>";
