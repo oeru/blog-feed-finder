@@ -24,7 +24,7 @@ class BFFForm extends BFFCourse {
         $this->create_post(BFF_SLUG);
         $this->log('setting up scripts');
         // add the ajax handlers
-        wp_enqueue_script('bff-script', BFF_URL.'js/script.js', array(
+        wp_enqueue_script('bff-script', BFF_URL.'js/bff_script.js', array(
             'jquery', 'jquery-form'));
         wp_localize_script('bff-script', 'bff_data', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
@@ -32,7 +32,7 @@ class BFFForm extends BFFCourse {
             'nonce_set' => wp_create_nonce('bff-set-nonce'),
         ));
         // our css
-        wp_register_style('bff-style', BFF_URL.'css/style.css');
+        wp_register_style('bff-style', BFF_URL.'css/bff_style.css');
         wp_enqueue_style('bff-style');
         // this enables the feedfinder service for authenticated users...
         add_action('wp_ajax_bff_submit', array($this, 'ajax_submit'));
