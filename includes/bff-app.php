@@ -32,7 +32,7 @@ class BFFForm extends BFFCourse {
             'nonce_set' => wp_create_nonce('bff-set-nonce'),
         ));
         // our css
-        wp_register_style('bff-style', plugins_url('css/style.css', __FILE__));
+        wp_register_style('bff-style', BFF_URL.'css/style.css');
         wp_enqueue_style('bff-style');
         // this enables the feedfinder service for authenticated users...
         add_action('wp_ajax_bff_submit', array($this, 'ajax_submit'));

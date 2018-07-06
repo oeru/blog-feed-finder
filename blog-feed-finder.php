@@ -62,7 +62,7 @@ define('BFF_DEBUG', true);
 define('LOG_STREAM', getenv('LOG_STREAM'));
 
 // include the dependencies
-require BFF_PATH . '/bff-app.php';
+require BFF_PATH . '/includes/bff-app.php';
 
 if ( function_exists( 'add_action' ) ) {
     // this starts everything up!
