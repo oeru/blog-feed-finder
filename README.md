@@ -5,7 +5,7 @@ A WordPress plug-in that helps a user find a valid URL for their personal blog f
 
 The goal of the Blog Feed Finder (BFF) is to provide non-technical users an intuitive interface which guides them through the process of finding the appropriate web address (URI) for their blog's feed, providing them with short non-technical insights to help their learning, complemented with more technically accurate elaboration in user-selectable info popups. The system is intended for use by both desktop/laptop and mobile computer users.
 
-The BFF plug-in is designed to work on a WP in Multi-Site configuration. In our case, we use each sub-site (in subdir mode) as a separate "Course" in which learners (either anonymous or logged in users) participate. Once the user has found a valid blog feed, if they are authenticated, this plugin allows them to associate that feed URL (and its feed type, e.g. RSS, Atom, JSON) with each Course (subsite) for which they are registered.
+The BFF plug-in is designed to work on a WP in Multi-Site configuration. In our case, we use each sub-site (in subdir mode) as a separate "Course" in which learners (either anonymous or logged in users) participate (i.e. are enrolled). Once the user has found a valid blog feed, if they are authenticated, this plugin allows them to associate that feed URL (and its feed type, e.g. RSS, Atom, JSON) with each Course (subsite) in which they are enrolled.
 
 We ([the OERu](https://oeru.org)) also operates the [WEnotes service](https://tech.oeru.org/wikieducator-notes-oerus-course-feed-aggregation-and-messaging-system "Overview of what WikiEducator notes are, and why"), [WEnotes WordPress Plug-in](https://github.com/oeru/wenotes) and a [library of scanner scripts](https://bitbucket.org/wikieducator/wenotes-tools) ([we also have a full-Docker-based deployment stack](https://github.com/oeru/wenotes-docker)), which scans various social media (mostly Free and Open Source federated media in preference to the proprietary social media monocultures, e.g. Mastodon, Discourse, Hypothes.is, etc.) to aggregate messages which are tagged with our Course Codes. In the case of registered blog feeds, we scan them for tagged posts and then reference them in a form that can be incorporated into our per-Course WEnotes feeds.
 
@@ -24,7 +24,7 @@ The plugin creates a default page (path /blog-feed-finder/) on the site when ena
 If the user is authenticated, further capabilities are available:
 
 * If multiple feeds are found, the BFF tries to identify the most likely candidate, and eliminates any that clearly aren't what's being sought (e.g. the common "Comment" feed on many WordPress blogs), allowing the user to choose among any remaining candidates,
-* once a single feed is selected, the user is then presented with a list of the Courses (subsites) for which they are registered, including a listing of any existing feed specifications. The user can then opt to set the selected feed to that for any of the courses.
+* once a single feed is selected, the user is then presented with a list of the Courses (subsites) in which they are enrolled, including a listing of any existing feed specifications. The user can then opt to set the selected feed to that for any of the courses.
 
 ## Technical details
 
