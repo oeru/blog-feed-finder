@@ -41,7 +41,6 @@ class BFFForm extends BFFCourse {
         // this enables the setblogfeed service for authenticated users...
         add_action('wp_ajax_bff_set', array($this, 'ajax_set'));
         $this->log('finished setting up scripts');
-
     }
 
     // the function called after the bff-submit button is clicked in our form
@@ -61,6 +60,7 @@ class BFFForm extends BFFCourse {
        wp_die();
     }
 
+    // function called after the bff-set button is clicked
     public function ajax_set() {
         $this->log('in ajax_set: '.print_r($_POST, true));
         // check if the submitted nonce matches the generated nonce created in the auth_init functionality
@@ -186,7 +186,7 @@ class BFFForm extends BFFCourse {
     public function add_post_class($classes) {
         global $post;
         $post_slug=$post->post_name;
-        $this->log('running body_class filter - post_slug = '.$post_slug);
+        $this->log('running class filter - post_slug = '.$post_slug);
         if ($post_slug === BFF_SLUG) {
             $this->log('setting class on '.BFF_SLUG.' to '.BFF_CLASS);
             $classes[] = BFF_CLASS;

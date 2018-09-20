@@ -1,7 +1,7 @@
 /* created by Dave Lane, dave@oerfoundation.org, https://oeru.org */
-var DEBUG = false; // set to false to disable debugging
-var LOG = DEBUG ? console.log.bind(console) : function () {};
-LOG('BFF DEBUG = true'); // only prints if DEBUG = true
+var BFF_DEBUG = true; // set to false to disable debugging
+function LOG() { if (BFF_DEBUG) { console.log.apply(this, arguments); }}
+LOG('BFF DEBUG =', BFF_DEBUG); // only prints if DEBUG = true
 
 /* jquery-independent functions */
 function addslashes(string) {
@@ -133,7 +133,7 @@ function get_course_id(str) {
     return id;
 }
 
-// jQuery seletors and related functions in that context
+// jQuery selectors and related functions in that context
 jQuery(document).ready(function() {
     var $ = jQuery;
     var feeds, feed_types, courses, authenticated;
